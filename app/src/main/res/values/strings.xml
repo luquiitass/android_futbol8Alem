@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Futbol8AlemAdmin</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_act__registrar_equipo">Act_RegistrarEquipo</string>
+    <string name="registrarEquipo">Registrar Equipo</string>
+    <string name="seleccionarfecha">Seleccionar fecha</string>
+    <string name="nombreEquipo">Nombre del Equipo</string>
+    <string name="a">a</string>
+    <string name="Fechadeinicio">Fecha de Inicio del Equipo</string>
+    <string name="direccionCancha">Direccion de cancha</string>
+    <string name="saleccionarTipoDeEquipo">Selecionar el tipo de equipo:</string>
+    <string name="title_activity_act__crear_partido">Partido Nuevo</string>
+    <string name="vs">vs</string>
+    <string name="seleccionarHora">Seleccionar hora</string>
+    <string name="seleccionarCancha">Cancha de:</string>
+    <string name="otraDireccion">Otra dirección</string>
+    <string name="agregarPartido">Agregar agrtido</string>
+    <string name="selacciobarEquios">Seleccionar equipos</string>
+    <string name="selaccionarFechaDeEncuentro">Seleccionar fecha:</string>
+    <string name="selaccionarHoraDeEncuentro">Seleccionar hora de encuentro</string>
+</resources>

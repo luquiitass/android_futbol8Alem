@@ -1,0 +1,124 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.not.futbol8alemadmin.Actividades.Act_CrearPartido">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            style="@style/crearPart_LinearLayouVertical">
+
+            <TextView
+                style="@style/TV_crearPart"
+                android:layout_marginTop="10dp"
+                android:text="@string/selacciobarEquios"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <Spinner
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/crearPart_Spiner_eL"></Spinner>
+
+                <TextView
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="17dp"
+                    android:textColor="#ff5666f0"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center"
+                    android:text="@string/vs"/>
+
+                <Spinner
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/crearPart_Spiner_eV"></Spinner>
+                </LinearLayout>
+
+            <TextView
+                style="@style/TV_crearPart"
+                android:text="@string/selaccionarFechaDeEncuentro"/>
+
+            <LinearLayout
+                style="@style/crearPart_LinearLayouHorizontal">
+
+                <Button
+                    style="@style/BTN_crearPart"
+                    android:text="@string/seleccionarfecha"
+                    android:id="@+id/crearPart_BTN_seleccionarFecha"
+                    android:onClick="seleccionarFecha"/>
+                <EditText
+                    style="@style/ET_crearPart"
+                    android:text="00/00/0000"
+                    android:id="@+id/crearPart_ET_fecha"/>
+
+                </LinearLayout>
+
+            <TextView
+                style="@style/TV_crearPart"
+                android:text="@string/selaccionarHoraDeEncuentro"/>
+
+            <LinearLayout
+                style="@style/crearPart_LinearLayouHorizontal">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/seleccionarHora"
+                    android:id="@+id/crearPart_BTN_seleccionarrHora"
+                    android:onClick="seleccionarHora"/>
+                <EditText
+                    style="@style/ET_crearPart"
+                    android:text="00:00:00"
+                    android:id="@+id/crearPart_ET_hora"/>
+
+            </LinearLayout>
+
+            <TextView
+                style="@style/TV_crearPart"
+                android:text="@string/seleccionarCancha" />
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/crearPart_Spiner_canchaDe">
+
+                </Spinner>
+            <TextView
+                style="@style/TV_crearPart"
+                android:text="@string/direccionCancha"/>
+
+            <EditText
+                style="@style/ET_crearPart"
+                android:id="@+id/crearPart_ET_direccion"
+                android:inputType="text" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/otraDireccion"
+                android:id="@+id/crearPart_ChecB_otraDireccion"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/agregarPartido"/>
+
+            </LinearLayout>
+
+
+
+        </ScrollView>
+
+
+
+
+</LinearLayout>

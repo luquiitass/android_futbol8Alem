@@ -1,0 +1,84 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.not.futbol8alemadmin.Actividades.Act_RegistrarEquipo"
+    >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nombreEquipo"
+                android:layout_marginTop="20dp"/>
+
+            <EditText
+                style="@style/TV_regEquipo"
+                android:id="@+id/ET_regEquipo_nombreEquipo"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Fechadeinicio"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="15dp">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/seleccionarfecha"
+                    android:onClick="seleccionarFechaInicio"/>
+                <EditText
+                    style="@style/TV_regEquipo"
+                    android:gravity="center"
+                    android:text="00/00/0000"
+                    android:editable="false"
+                    android:id="@+id/ET_regEquipo_fechaInicio"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/direccionCancha"/>
+
+            <EditText
+                style="@style/TV_regEquipo"
+                android:id="@+id/ET_regEquipo_direccion"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/saleccionarTipoDeEquipo"/>
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/regEquipo_Spinnerlibre"
+                android:layout_margin="10dp"
+                ></Spinner>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/registrarEquipo"
+                android:onClick="registrarEquipo"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+</LinearLayout>
