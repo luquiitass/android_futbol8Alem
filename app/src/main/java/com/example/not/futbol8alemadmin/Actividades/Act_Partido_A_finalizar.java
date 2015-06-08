@@ -1,5 +1,6 @@
 package com.example.not.futbol8alemadmin.Actividades;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -98,5 +99,16 @@ public class Act_Partido_A_finalizar extends ActionBarActivity {
         TextView TV_subtitulo=(TextView)unSubtitulo.findViewById(R.id.TV_subtitulo);
         TV_subtitulo.setText(subtitulo);
         LV_listaPrincipal.addHeaderView(unSubtitulo);
+    }
+
+    private void eventosBotones(){
+        this.BTN_modificarPartdo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(Act_Partido_A_finalizar.this,Act_CrearPartido.class);
+                intent.putExtra("patido",unPartido);
+                startActivity(intent);
+            }
+        });
     }
 }
