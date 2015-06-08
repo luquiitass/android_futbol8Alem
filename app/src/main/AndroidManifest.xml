@@ -26,6 +26,14 @@
             android:name=".Actividades.Act_CrearPartido"
             android:label="@string/title_activity_act__crear_partido" >
         </activity>
+        <activity
+            android:name=".Actividades.Act_partidos"
+            android:label="@string/title_activity_act_partidos" >
+        </activity>
+        <activity
+            android:name=".Actividades.Act_Partido_A_finalizar"
+            android:label="@string/title_activity_act__partido__a_finalizar" >
+        </activity>
     </application>
 
 </manifest>

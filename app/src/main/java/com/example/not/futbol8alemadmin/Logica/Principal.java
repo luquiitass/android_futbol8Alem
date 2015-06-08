@@ -36,6 +36,26 @@ public class Principal extends Observable implements Serializable{
         return equipos;
     }
 
+    public ArrayList<Partido>getPartidosJugados(){
+        ArrayList<Partido>retorno=new ArrayList<Partido>();
+        for (Partido partido:this.partidos){
+            if (partido.getJugado()){
+                retorno.add(partido);
+            }
+        }
+        return retorno;
+    }
+
+    public ArrayList<Partido>getPartidosNoJugados(){
+        ArrayList<Partido>retorno=new ArrayList<Partido>();
+        for (Partido partido:this.partidos){
+            if (!partido.getJugado()){
+                retorno.add(partido);
+            }
+        }
+        return retorno;
+    }
+
     /**
      * 
      */
@@ -53,6 +73,11 @@ public class Principal extends Observable implements Serializable{
         operacionesSelectDB(url,"equipos");
     }
 
+    public void obtenerPartidos() {
+        String url="http://lucasdb1.esy.es/conectFutbol8/GetPartidos2.php";
+        operacionesSelectDB(url,"partidos");
+    }
+
 
     public Partido obtenerPartido(int id_parido) {
         for (int i=0;i<this.partidos.size();i++){
@@ -64,9 +89,9 @@ public class Principal extends Observable implements Serializable{
     }
 
 
-    public Boolean existePartido(int id_partido) {
-        for (int i=0;i<this.partidos.size();i++){
-            if (partidos.get(i).getId_partido()==id_partido){
+    public Boolean existePartido(Partido unPartido) {
+        for (Partido partido:this.partidos){
+            if (partido.equals(unPartido)){
                 return  true;
             }
         }
@@ -76,18 +101,19 @@ public class Principal extends Observable implements Serializable{
     /**
      * 
      */
-    public void crearPartido(String equipoLocal, String equipoVisitante, String canchaeDe, String direccion, String feha, String hora){
+    public void crearPartido(String equipoLocal, String equipoVisitante, String canchaeDe, String direccion, String feha, String hora)throws Exepcion {
         Partido unPartido=new Partido(equipoLocal,equipoVisitante,canchaeDe,direccion,feha,hora);
-        String url = "http://lucasdb1.esy.es/conectFutbol8/PutEquipo.php?";
-        RequestParams par = new RequestParams();
-        par.put("eL",unPartido.getEquipoLocal());
-        par.put("eV",unPartido.getEquipoVisitante());
-        par.put("canchaDe",unPartido.getCanchaeDe());
-        par.put("direc",unPartido.getDireccion());
-        par.put("horaEncuentro",unPartido.getHora());
-        par.put("fecha",unPartido.getFeha());
-        operacionesInsertDB(url, par, "partido");
-
+        if (!existePartido(unPartido)) {
+            String url = "http://lucasdb1.esy.es/conectFutbol8/PutPartido.php?";
+            RequestParams par = new RequestParams();
+            par.put("eL", unPartido.getEquipoLocal());
+            par.put("eV", unPartido.getEquipoVisitante());
+            par.put("canchaDe", unPartido.getCanchaeDe());
+            par.put("direc", unPartido.getDireccion());
+            par.put("horaEncuentro", unPartido.getHora());
+            par.put("fecha", unPartido.getFeha());
+            operacionesInsertDB(url, par, "partido");
+        }else{throw new Exepcion("Ya está creado éste partido");}
     }
 
     /**
@@ -221,8 +247,8 @@ public class Principal extends Observable implements Serializable{
                     }
                     Partido unPartido=new Partido(jsonArray.getJSONObject(i).getInt("part"),jsonArray.getJSONObject(i).getString("eqL"), jsonArray.getJSONObject(i).getString("eqV"), jsonArray.getJSONObject(i).getInt("glL"), jsonArray.getJSONObject(i).getInt("glV"), jsonArray.getJSONObject(i).getString("canchaDe"), jsonArray.getJSONObject(i).getString("direccion"),jsonArray.getJSONObject(i).getString("fecha"), jsonArray.getJSONObject(i).getString("hora"),jsonArray.getJSONObject(i).getString("jugado"),jugado );
                     this.partidos.add(unPartido);
-                    estado="cargarPartidos";
                 }
+                estado="cargarPartidos";
             }
             if (accion.equals("equipos") || accion.equals("todo")){
                 for (int i = ultimapos; i < jsonArray.length(); i++) {
@@ -265,7 +291,13 @@ public class Principal extends Observable implements Serializable{
                                 }
                                 break;
                             case "partido":
-
+                                if (response.equals("Insertado")){
+                                    setChanged();
+                                    notifyObservers("partidoInsertado");
+                                }else{
+                                    setChanged();
+                                    notifyObservers("partidoNoInsertado");
+                                }
                                 break;
                         }
                     }else{
@@ -284,8 +316,6 @@ public class Principal extends Observable implements Serializable{
             setChanged();
             notifyObservers("Error de conexión");
         }
-        setChanged();
-        notifyObservers();
     }
 
 

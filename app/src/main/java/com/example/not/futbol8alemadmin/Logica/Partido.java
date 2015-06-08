@@ -1,5 +1,6 @@
 package com.example.not.futbol8alemadmin.Logica;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,7 +9,7 @@ import java.util.*;
 /**
  * 
  */
-public class Partido {
+public class Partido implements Serializable{
 
     protected int id_partido;
     private String equipoLocal;
@@ -197,4 +198,12 @@ public class Partido {
         // TODO implement here
     }
 
+
+    public boolean equals(Partido o) {
+
+        if((this.equipoLocal.equals(o.getEquipoLocal())||(this.equipoLocal.equals(o.getEquipoVisitante())))&& (this.equipoVisitante.equals(o.getEquipoVisitante())||(this.equipoLocal.equals(o.getEquipoVisitante()))) && this.feha.equals(formatAPPFecha(o.getFeha()))){
+            return true;
+        }
+        return false;
+    }
 }

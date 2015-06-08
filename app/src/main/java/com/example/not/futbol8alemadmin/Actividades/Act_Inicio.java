@@ -57,6 +57,10 @@ public class Act_Inicio extends ActionBarActivity implements Observer{
         startActivity(intent);
     }
 
+    public void finalizarPartidoOnClick(View view){
+        startActivity(new Intent(this,Act_partidos.class));
+    }
+
     @Override
     public void update(Observable observable, Object data) {
         if (data.equals("cargado")){

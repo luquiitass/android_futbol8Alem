@@ -3,7 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_act__registrar_equipo">Act_RegistrarEquipo</string>
+    <string name="title_activity_act__registrar_equipo">Registrar Equipo</string>
     <string name="registrarEquipo">Registrar Equipo</string>
     <string name="seleccionarfecha">Seleccionar fecha</string>
     <string name="nombreEquipo">Nombre del Equipo</string>
@@ -16,8 +16,21 @@
     <string name="seleccionarHora">Seleccionar hora</string>
     <string name="seleccionarCancha">Cancha de:</string>
     <string name="otraDireccion">Otra dirección</string>
-    <string name="agregarPartido">Agregar agrtido</string>
+    <string name="agregarPartido">Crear partido</string>
     <string name="selacciobarEquios">Seleccionar equipos</string>
     <string name="selaccionarFechaDeEncuentro">Seleccionar fecha:</string>
     <string name="selaccionarHoraDeEncuentro">Seleccionar hora de encuentro</string>
+    <string name="title_activity_act_partidos">Act_partidos</string>
+    <string name="partidos">Partidos</string>
+    <string name="crearPartido">Crear Partido</string>
+    <string name="finalizarPartido">Finalizar Partido</string>
+    <string name="equipoLocal">Equipo Local</string>
+    <string name="equipoVisitante">Equipo visitante</string>
+    <string name="hora">hora:</string>
+    <string name="canchaDe">Cancha de:</string>
+    <string name="title_activity_act__partido__a_finalizar">Act_Partido_A_finalizar</string>
+    <string name="nombreDato">nombreDato</string>
+    <string name="valorDato">ValoreDato</string>
+    <string name="subtitulo">Subtitulo</string>
+    <string name="modificarPartido">Modificar Partido</string>
 </resources>

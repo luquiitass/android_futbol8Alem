@@ -48,6 +48,7 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
         ET_nombreEquipo=(EditText)findViewById(R.id.ET_regEquipo_nombreEquipo);
         ET_direccionCancha=(EditText)findViewById(R.id.ET_regEquipo_direccion);
         principal=(Principal)getIntent().getExtras().getSerializable("principal");
+        principal.getEquipos();
         principal.addObserver(this);
         cargarViewInicio();
     }

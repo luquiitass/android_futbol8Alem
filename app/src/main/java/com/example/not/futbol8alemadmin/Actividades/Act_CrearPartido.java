@@ -17,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.not.futbol8alemadmin.Exepcion.Exepcion;
 import com.example.not.futbol8alemadmin.Logica.Equipo;
 import com.example.not.futbol8alemadmin.Logica.Principal;
 import com.example.not.futbol8alemadmin.R;
@@ -57,6 +58,7 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
         setContentView(R.layout.activity_act__crear_partido);
         principal=new Principal();
         principal.addObserver(this);
+        principal.obtenerPartidos();
         SPN_eL=(Spinner)findViewById(R.id.crearPart_Spiner_eL);
         SPN_eV=(Spinner)findViewById(R.id.crearPart_Spiner_eV);
         SPN_canchaDe=(Spinner)findViewById(R.id.crearPart_Spiner_canchaDe);
@@ -67,10 +69,19 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
         principal.obtenerEquipos();
     }
 
-    public void cargarView(){
-        cargarFechaHoraActual();
-        eventosChackBox();
-        eventosEnSpinner();
+    public void crearPartido(View view){
+        if (SPN_eL.getSelectedItemPosition()!=0 && SPN_eL.getSelectedItemPosition()!=0){
+            if (SPN_canchaDe.getSelectedItemPosition()!=0){
+                if (!ET_direccionCancha.getText().toString().equals("")){
+                    try {
+                        principal.crearPartido(SPN_eL.getSelectedItem().toString(),SPN_eV.getSelectedItem().toString(),SPN_canchaDe.getSelectedItem().toString(),ET_direccionCancha.getText().toString(),ET_fecha.getText().toString(),ET_hora.getText().toString());
+                    } catch (Exepcion exepcion) {
+                        Toast.makeText(this,exepcion.getMessage(),Toast.LENGTH_SHORT).show();
+                    }
+                }else{Toast.makeText(this,"Debe colocar la dirección de la cancha del equipo local",Toast.LENGTH_SHORT).show();}
+            }else{Toast.makeText(this,"Debe seleccione ell equipo Local",Toast.LENGTH_SHORT).show();
+                SPN_canchaDe.setFocusable(true);}
+        }else{Toast.makeText(this,"Debe seleccionar los equipos del partido",Toast.LENGTH_SHORT).show();}
     }
 
     public void seleccionarFecha(View view){
@@ -95,6 +106,12 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void cargarView(){
+        cargarFechaHoraActual();
+        eventosChackBox();
+        eventosEnSpinner();
     }
 
     public void cargarSpinnerEquipos(){
@@ -129,14 +146,14 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
         this.SPN_eL.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (!SPN_eL.getSelectedItem().equals(SPN_eV.getSelectedItem())) {
-                    if (SPN_eV.getSelectedItemPosition() != 0 && SPN_eL.getSelectedItemPosition() != 0) {
-                        String[] item = {"Seleccionar EquipoLocal", SPN_eL.getSelectedItem().toString(), SPN_eV.getSelectedItem().toString()};
-                        SPN_canchaDe.setAdapter(new ArrayAdapter<String>(Act_CrearPartido.this, R.layout.libre_veterano, item));
+                if (SPN_eV.getSelectedItemPosition() != 0 && SPN_eL.getSelectedItemPosition() != 0) {
+                    if (!SPN_eL.getSelectedItem().equals(SPN_eV.getSelectedItem())) {
+                            String[] item = {"Seleccionar EquipoLocal", SPN_eL.getSelectedItem().toString(), SPN_eV.getSelectedItem().toString()};
+                            SPN_canchaDe.setAdapter(new ArrayAdapter<String>(Act_CrearPartido.this, R.layout.libre_veterano, item));
+                    }else{
+                        Toast.makeText(Act_CrearPartido.this,"Los equipos deben ser distintos",Toast.LENGTH_LONG).show();
+                        SPN_eL.setSelection(0);
                     }
-                }else{
-                    Toast.makeText(Act_CrearPartido.this,"Los equipos deben ser distintos",Toast.LENGTH_LONG).show();
-                    SPN_eL.setSelection(0);
                 }
             }
             @Override
@@ -147,14 +164,14 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
         this.SPN_eV.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (!SPN_eL.getSelectedItem().equals(SPN_eV.getSelectedItem())) {
-                    if (SPN_eV.getSelectedItemPosition()!=0 && SPN_eL.getSelectedItemPosition()!=0){
-                        String[] item={"Seleccionar EquipoLocal",SPN_eL.getSelectedItem().toString(),SPN_eV.getSelectedItem().toString()};
-                        SPN_canchaDe.setAdapter(new ArrayAdapter<String>(Act_CrearPartido.this,R.layout.libre_veterano,item));
+                if (SPN_eV.getSelectedItemPosition()!=0 && SPN_eL.getSelectedItemPosition()!=0) {
+                    if (!SPN_eL.getSelectedItem().equals(SPN_eV.getSelectedItem())) {
+                        String[] item = {"Seleccionar EquipoLocal", SPN_eL.getSelectedItem().toString(), SPN_eV.getSelectedItem().toString()};
+                        SPN_canchaDe.setAdapter(new ArrayAdapter<String>(Act_CrearPartido.this, R.layout.libre_veterano, item));
+                    } else {
+                        Toast.makeText(Act_CrearPartido.this, "Los equipos deben ser distintos", Toast.LENGTH_LONG).show();
+                        SPN_eV.setSelection(0);
                     }
-                }else{
-                    Toast.makeText(Act_CrearPartido.this,"Los equipos deben ser distintos",Toast.LENGTH_LONG).show();
-                    SPN_eV.setSelection(0);
                 }
             }
             @Override
@@ -236,13 +253,20 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
                 case "cargarEquipos":
                     this.equipos=((Principal)observable).getEquipos();
                     cargarSpinnerEquipos();
+                    cargarView();
                     break;
                 case "Error de conexión":
                     Toast.makeText(this,"Error de Conexión",Toast.LENGTH_LONG).show();
                     break;
+                case "partidoInsertado":
+                    Toast.makeText(this,"Partido creado correctamente",Toast.LENGTH_LONG).show();
+                    this.finish();
+                    break;
+                case "partidoNoInsertado":
+                    Toast.makeText(this,"No se pudo crear éste partido",Toast.LENGTH_LONG).show();
+                    break;
             }
 
         }
-        cargarView();
     }
 }

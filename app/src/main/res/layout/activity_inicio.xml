@@ -16,7 +16,14 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/registrarEquipo"
+        android:text="@string/crearPartido"
         android:id="@+id/BTN_ini_crearPartido"
         android:onClick="crearPartidoOnClick"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/finalizarPartido"
+        android:id="@+id/BTN_ini_finalizarPartido"
+        android:onClick="finalizarPartidoOnClick"/>
 </LinearLayout>
