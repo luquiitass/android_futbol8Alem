@@ -108,6 +108,7 @@ public class Act_Partido_A_finalizar extends ActionBarActivity {
                 Intent intent=new Intent(Act_Partido_A_finalizar.this,Act_CrearPartido.class);
                 intent.putExtra("patido",unPartido);
                 startActivity(intent);
+                finish();
             }
         });
     }
