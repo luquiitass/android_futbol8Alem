@@ -33,4 +33,10 @@
     <string name="valorDato">ValoreDato</string>
     <string name="subtitulo">Subtitulo</string>
     <string name="modificarPartido">Modificar Partido</string>
+    <string name="title_activity_act__principal">Act_Principal</string>
+    <string name="administrarLibres">Administrar Libres</string>
+    <string name="administrarVeteranos">Administrar Veteranos</string>
+    <string name="title_activity_act_finalizar_partido">Act_finalizarPartido</string>
+    <string name="goles">Goles</string>
+    <string name="colocarResultados">Colocar Resultado</string>
 </resources>

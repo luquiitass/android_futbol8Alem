@@ -99,23 +99,24 @@
             <EditText
                 style="@style/ET_crearPart"
                 android:id="@+id/crearPart_ET_direccion"
+                android:gravity="left"
                 android:inputType="text" />
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/otraDireccion"
+                android:enabled="false"
                 android:id="@+id/crearPart_ChecB_otraDireccion"/>
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/agregarPartido"
-                android:onClick="crearPartido"/>
-
-            </LinearLayout>
+                android:id="@+id/BTN_Crear_modificar_partido"
+                android:onClick="eventoBootonOnClicK"/>
 
 
+        </LinearLayout>
 
         </ScrollView>
 

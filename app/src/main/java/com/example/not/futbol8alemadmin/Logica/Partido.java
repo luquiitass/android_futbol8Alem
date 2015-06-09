@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * 
  */
-public class Partido implements Serializable{
+public class Partido extends Observable implements Serializable{
 
     protected int id_partido;
     private String equipoLocal;
@@ -22,19 +22,21 @@ public class Partido implements Serializable{
     private String hora;
     private String ganador;
     private Boolean jugado;
+    private int libre;
     private ArrayList<Comentario> comentarios;
 
 
     public Partido() {
     }
 
-    public Partido(String equipoLocal, String equipoVisitante, String canchaeDe, String direccion, String feha, String hora) {
+    public Partido(String equipoLocal, String equipoVisitante, String canchaeDe, String direccion, String feha, String hora,int libre) {
         this.equipoLocal = equipoLocal;
         this.equipoVisitante = equipoVisitante;
         this.canchaeDe = canchaeDe;
         this.direccion = direccion;
         this.feha = formatBDFecha(feha);
         this.hora = hora;
+        this.libre=libre;
     }
 
     public Partido(int id_partido, String equipoLocal, String equipoVisitante, int golesLocal, int golesVisitante, String canchaeDe, String direccion, String feha, String hora, String ganador, Boolean jugado) {
@@ -49,6 +51,7 @@ public class Partido implements Serializable{
         this.hora = hora;
         this.ganador = ganador;
         this.jugado = jugado;
+
         this.comentarios=new ArrayList<Comentario>();
     }
 
@@ -148,6 +151,14 @@ public class Partido implements Serializable{
         this.comentarios = comentarios;
     }
 
+    public int getLibre() {
+        return libre;
+    }
+
+    public void setLibre(int libre) {
+        this.libre = libre;
+    }
+
     private String formatAPPFecha(String fecha){
         DateFormat format= new SimpleDateFormat("yyyy-MM-dd");
         DateFormat formatoSalida= new SimpleDateFormat("dd/MM/yyyy");
@@ -200,7 +211,6 @@ public class Partido implements Serializable{
 
 
     public boolean equals(Partido o) {
-
         if((this.equipoLocal.equals(o.getEquipoLocal())||(this.equipoLocal.equals(o.getEquipoVisitante())))&& (this.equipoVisitante.equals(o.getEquipoVisitante())||(this.equipoLocal.equals(o.getEquipoVisitante()))) && this.feha.equals(formatAPPFecha(o.getFeha()))){
             return true;
         }

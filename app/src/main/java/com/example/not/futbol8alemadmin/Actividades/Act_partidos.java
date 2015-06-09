@@ -24,6 +24,8 @@ public class Act_partidos extends ActionBarActivity implements Observer{
 
     private ListView LV_partidos;
 
+    private final DiversosDialog pDialog=new DiversosDialog();
+
 
     // todo ---------metodos heredados-----------------------------
 
@@ -31,13 +33,21 @@ public class Act_partidos extends ActionBarActivity implements Observer{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act_partidos);
-        principal=new Principal();
+        principal=(Principal)getIntent().getSerializableExtra("principal");
+        setTitle("Partidos "+principal.queAdministro());
         principal.addObserver(this);
+        pDialog.onProgresSDialog(this,"Cargando...");
         principal.obtenerPartidos();
         LV_partidos=(ListView)findViewById(R.id.LV_partidos);
         cargarEventosListView();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        pDialog.onProgresSDialog(this,"Cargando...");
+        principal.obtenerPartidos();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -67,7 +77,7 @@ public class Act_partidos extends ActionBarActivity implements Observer{
                     Toast.makeText(this,"Error de conexión",Toast.LENGTH_LONG).show();
                     break;
             }
-
+            pDialog.ofProgressDialog();
         }
     }
 
@@ -80,6 +90,7 @@ public class Act_partidos extends ActionBarActivity implements Observer{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent=new Intent(Act_partidos.this, Act_Partido_A_finalizar.class);
                 intent.putExtra("partido",principal.getPartidosNoJugados().get(position));
+                intent.putExtra("principal",principal);
                 startActivity(intent);
             }
         });

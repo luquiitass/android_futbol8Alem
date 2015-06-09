@@ -7,10 +7,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.not.futbol8alemadmin.Exepcion.Exepcion;
@@ -33,9 +31,10 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
     static final int DATE_DIALOG_ID = 0;
 
     private EditText ET_fechaInicio;
-    private Spinner SPI_equipoLibres;
     private EditText ET_nombreEquipo;
     private EditText ET_direccionCancha;
+
+    private final DiversosDialog pDialog=new DiversosDialog();
 
 
 
@@ -44,10 +43,10 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act__registrar_equipo);
         ET_fechaInicio=(EditText)findViewById(R.id.ET_regEquipo_fechaInicio);
-        SPI_equipoLibres=(Spinner)findViewById(R.id.regEquipo_Spinnerlibre);
         ET_nombreEquipo=(EditText)findViewById(R.id.ET_regEquipo_nombreEquipo);
         ET_direccionCancha=(EditText)findViewById(R.id.ET_regEquipo_direccion);
         principal=(Principal)getIntent().getExtras().getSerializable("principal");
+        setTitle("Registrar equipo "+principal.queAdministro());
         principal.getEquipos();
         principal.addObserver(this);
         cargarViewInicio();
@@ -55,21 +54,12 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
 
     public void registrarEquipo(View view) throws Exepcion {
         try {
-            if (SPI_equipoLibres.getSelectedItemPosition() != 0) {
-                int libre =-1;
-                if (SPI_equipoLibres.getSelectedItem().toString().equals("Libre")) {
-                    libre = 1;
-                } else if (SPI_equipoLibres.getSelectedItem().toString().equals("Veteranos")) {
-                    libre = 0;
-                }
                 if (!ET_nombreEquipo.getText().toString().equals("") && !ET_direccionCancha.getText().toString().equals("")) {
-                    this.principal.crearEquipo(ET_nombreEquipo.getText().toString(), ET_fechaInicio.getText().toString(), ET_direccionCancha.getText().toString(), libre);
+                    pDialog.onProgresSDialog(this,"Cargando...");
+                    this.principal.crearEquipo(ET_nombreEquipo.getText().toString(), ET_fechaInicio.getText().toString(), ET_direccionCancha.getText().toString());
                 }else {
                     Toast.makeText(this,"Debe completar todos los campos",Toast.LENGTH_LONG).show();
                 }
-            }else{
-                Toast.makeText(this,"Seleccionar el tipo de equipo",Toast.LENGTH_LONG).show();
-            }
         }catch (Exepcion e){
             Toast.makeText(this,e.getMessage(),Toast.LENGTH_LONG).show();
         }
@@ -77,7 +67,6 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
 
     public void cargarViewInicio(){
         cargargarFechaActual();
-        cargarItemSpinner();
     }
 
     public void seleccionarFechaInicio(View view) {
@@ -102,11 +91,6 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
 
     //Todo --------------------Metodos para modificar y cargar datos en las View al iniciar---------------
 
-    public void cargarItemSpinner(){
-        String[] item={"Seleccionar","Libre","Veteranos"};
-        SPI_equipoLibres.setAdapter(new ArrayAdapter<String>(this,R.layout.libre_veterano,item));
-
-    }
 
     public void cargargarFechaActual(){
         final Calendar c= Calendar.getInstance();
@@ -154,6 +138,7 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
                     Toast.makeText(this, "No se pudo registrar el equipo", Toast.LENGTH_LONG).show();
                     break;
             }
+            pDialog.ofProgressDialog();
         }
     }
 }

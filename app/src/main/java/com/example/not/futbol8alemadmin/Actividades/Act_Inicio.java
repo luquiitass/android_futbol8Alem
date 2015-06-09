@@ -18,11 +18,20 @@ import java.util.Observer;
 public class Act_Inicio extends ActionBarActivity implements Observer{
 
     private Principal principal;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio);
-        this.principal=new Principal();
+        int libre;
+        if (getIntent().getBooleanExtra("Libre",false)){
+            libre=1;
+        }else{
+            libre=0;
+        }
+        this.principal=new Principal(libre);
+        setTitle("Adm Equipos "+principal.queAdministro());
         principal.addObserver(this);
     }
 
@@ -58,7 +67,9 @@ public class Act_Inicio extends ActionBarActivity implements Observer{
     }
 
     public void finalizarPartidoOnClick(View view){
-        startActivity(new Intent(this,Act_partidos.class));
+        Intent intent=new Intent(this,Act_partidos.class);
+        intent.putExtra("principal",this.principal);
+        startActivity(intent);
     }
 
     @Override

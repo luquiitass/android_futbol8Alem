@@ -1,0 +1,111 @@
+package com.example.not.futbol8alemadmin.Actividades;
+
+import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.example.not.futbol8alemadmin.Logica.Partido;
+import com.example.not.futbol8alemadmin.Logica.Principal;
+import com.example.not.futbol8alemadmin.R;
+
+import java.util.Observable;
+import java.util.Observer;
+
+
+public class Act_finalizarPartido extends ActionBarActivity implements Observer{
+
+    private Principal principal;
+    private Partido unPartido;
+
+    final private DiversosDialog pDialog=new DiversosDialog();
+
+    private Spinner SPN_GL;
+    private Spinner SPN_GV;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_act_finalizar_partido);
+        SPN_GL=(Spinner)findViewById(R.id.SPN_FinalizarPartido_GL);
+        SPN_GV=(Spinner)findViewById(R.id.SPN_FinalizarPartido_GV);
+        principal=(Principal)getIntent().getSerializableExtra("principal");
+        principal.addObserver(this);
+        unPartido=(Partido)getIntent().getSerializableExtra("unPartido");
+        setTitle("Finalizar Partido "+principal.queAdministro());
+        cargarView();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_act_finalizar_partido, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private void cargarView(){
+        EditText ET_eL=(EditText)findViewById(R.id.ET_FinalPartido_EquipoLocales);
+        EditText ET_eV=(EditText)findViewById(R.id.ET_FinalPartido_EquipoVisitante);
+        ET_eL.setText(unPartido.getEquipoLocal());
+        ET_eV.setText(unPartido.getEquipoVisitante());
+        String[]items={"Seleccionar","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"};
+        SPN_GL.setAdapter(new ArrayAdapter<String>(this,R.layout.libre_veterano, items));
+        SPN_GV.setAdapter(new ArrayAdapter<String>(this,R.layout.libre_veterano, items));
+    }
+
+    public void actualizarResultadoPartido(View view){
+        pDialog.onProgresSDialog(this,"Cargando resultados...");
+
+        if (SPN_GL.getSelectedItemPosition()!=0&& SPN_GV.getSelectedItemPosition()!=0){
+            int gL,gV;
+            gL=Integer.valueOf(SPN_GL.getSelectedItem().toString());
+            gV=Integer.valueOf(SPN_GV.getSelectedItem().toString());
+            unPartido.setGolesLocal(gL);
+            unPartido.setGolesVisitante(gV);
+            if (gL<gV){
+                unPartido.setGanador(unPartido.getEquipoVisitante());
+            }else if (gL>gV){
+                unPartido.setGanador(unPartido.getEquipoLocal());
+            }else if (gL==gV){
+                unPartido.setGanador("Empatado");
+            }
+            unPartido.setJugado(true);
+        }
+        principal.finalizarPartido(unPartido);
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        if (data!=null){
+            switch (data.toString()){
+                case "Actualizado":
+                    Toast.makeText(this,"Partido Finalizado correctamente",Toast.LENGTH_LONG).show();
+                    finish();
+                    break;
+                case  "noActualizado":
+                    Toast.makeText(this,"No se Pudo colocar los resultados",Toast.LENGTH_LONG).show();
+                    break;
+                case "Error de Conexión":
+                    Toast.makeText(this,"Error de Conexión",Toast.LENGTH_LONG).show();
+                    break;
+            }
+            pDialog.ofProgressDialog();
+        }
+    }
+}

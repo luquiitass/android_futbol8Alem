@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.not.futbol8alemadmin.Exepcion.Exepcion;
 import com.example.not.futbol8alemadmin.Logica.Equipo;
+import com.example.not.futbol8alemadmin.Logica.Partido;
 import com.example.not.futbol8alemadmin.Logica.Principal;
 import com.example.not.futbol8alemadmin.R;
 
@@ -29,17 +31,20 @@ import java.util.Observer;
 
 
 public class Act_CrearPartido extends ActionBarActivity implements Observer{
+
     private Principal principal;
-    private ArrayList<Equipo> equipos=new ArrayList<Equipo>();
+    private Partido unPartido;
 
     private Spinner SPN_eL;
     private Spinner SPN_eV;
     private Spinner SPN_canchaDe;
     private CheckBox CheckBox_otradireccion;
-
+    private Button BTN_Crear_Modificar;
     private EditText ET_fecha;
     private EditText ET_hora;
     private EditText ET_direccionCancha;
+
+    private Boolean esModificar;
 
     private int año;
     private int mes;
@@ -51,14 +56,14 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
     static final int Diaalog_fecha= 0;
     static final int Dialog_hora = 77;
 
+    private final DiversosDialog pDialog=new DiversosDialog();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act__crear_partido);
-        principal=new Principal();
-        principal.addObserver(this);
-        principal.obtenerPartidos();
+
         SPN_eL=(Spinner)findViewById(R.id.crearPart_Spiner_eL);
         SPN_eV=(Spinner)findViewById(R.id.crearPart_Spiner_eV);
         SPN_canchaDe=(Spinner)findViewById(R.id.crearPart_Spiner_canchaDe);
@@ -66,18 +71,64 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
         ET_fecha=(EditText)findViewById(R.id.crearPart_ET_fecha);
         ET_hora=(EditText)findViewById(R.id.crearPart_ET_hora);
         CheckBox_otradireccion=(CheckBox)findViewById(R.id.crearPart_ChecB_otraDireccion);
-        principal.obtenerEquipos();
+        BTN_Crear_Modificar=(Button)findViewById(R.id.BTN_Crear_modificar_partido);
+
+        principal=(Principal)getIntent().getSerializableExtra("principal");
+        principal.addObserver(this);
+        principal.obtenerPartidosEquipos();
+
+        if (getIntent().getBooleanExtra("modificar",false)){
+            esModificar=true;
+            unPartido=(Partido)getIntent().getSerializableExtra("unPartido");
+            setTitle("Modificar partido " + principal.queAdministro());
+            unPartido.addObserver(this);
+            BTN_Crear_Modificar.setText("Modificar");
+            cargarViewParaModificar();
+        }else{
+            esModificar=false;
+            setTitle("Crear partido " + principal.queAdministro());
+            pDialog.onProgresSDialog(this, "Cargando...");
+            BTN_Crear_Modificar.setText("Crear Partido");
+        }
+
+
+
     }
 
-    public void crearPartido(View view){
+    public void eventoBootonOnClicK(View view){
+       if(((Button)view).getText().toString().equals("Modificar")){
+            modificarPartido();
+       }else if (((Button)view).getText().toString().equals("Crear Partido")){
+           crearPartido();
+       }
+    }
+
+
+    private void modificarPartido(){
         if (SPN_eL.getSelectedItemPosition()!=0 && SPN_eL.getSelectedItemPosition()!=0){
             if (SPN_canchaDe.getSelectedItemPosition()!=0){
                 if (!ET_direccionCancha.getText().toString().equals("")){
                     try {
-                        principal.crearPartido(SPN_eL.getSelectedItem().toString(),SPN_eV.getSelectedItem().toString(),SPN_canchaDe.getSelectedItem().toString(),ET_direccionCancha.getText().toString(),ET_fecha.getText().toString(),ET_hora.getText().toString());
+                        pDialog.onProgresSDialog(this,"Cargando...");
+                        principal.crearPartido(SPN_eL.getSelectedItem().toString(), SPN_eV.getSelectedItem().toString(), SPN_canchaDe.getSelectedItem().toString(), ET_direccionCancha.getText().toString(), ET_fecha.getText().toString(), ET_hora.getText().toString());
                     } catch (Exepcion exepcion) {
-                        Toast.makeText(this,exepcion.getMessage(),Toast.LENGTH_SHORT).show();
                     }
+                }else{Toast.makeText(this,"Debe colocar la dirección de la cancha del equipo local",Toast.LENGTH_SHORT).show();}
+            }else{Toast.makeText(this,"Debe seleccione ell equipo Local",Toast.LENGTH_SHORT).show();
+                SPN_canchaDe.setFocusable(true);}
+        }else{Toast.makeText(this,"Debe seleccionar los equipos del partido",Toast.LENGTH_SHORT).show();}
+    }
+
+
+    public void crearPartido(){
+        if (SPN_eL.getSelectedItemPosition()!=0 && SPN_eL.getSelectedItemPosition()!=0){
+            if (SPN_canchaDe.getSelectedItemPosition()!=0){
+                if (!ET_direccionCancha.getText().toString().equals("")){
+                        try {
+                            pDialog.onProgresSDialog(this,"Cargando...");
+                            principal.crearPartido(SPN_eL.getSelectedItem().toString(), SPN_eV.getSelectedItem().toString(), SPN_canchaDe.getSelectedItem().toString(), ET_direccionCancha.getText().toString(), ET_fecha.getText().toString(), ET_hora.getText().toString());
+                        } catch (Exepcion exepcion) {
+                        }
                 }else{Toast.makeText(this,"Debe colocar la dirección de la cancha del equipo local",Toast.LENGTH_SHORT).show();}
             }else{Toast.makeText(this,"Debe seleccione ell equipo Local",Toast.LENGTH_SHORT).show();
                 SPN_canchaDe.setFocusable(true);}
@@ -109,9 +160,28 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
     }
 
     public void cargarView(){
-        cargarFechaHoraActual();
-        eventosChackBox();
+        if (!esModificar) {
+            cargarFechaHoraActual();
+        }
         eventosEnSpinner();
+        cargarSpinnerEquipos();
+        eventosChackBox();
+    }
+
+    private void cargarViewParaModificar() {
+        ET_hora.setText(unPartido.getHora());
+        ET_fecha.setText(unPartido.getFeha());
+
+    }
+
+    private int obtenerPosicionParaSpiines(ArrayList<String> list,String objeto){
+        int retorno=0;
+        for (int i=0;i<list.size();i++){
+            if (list.get(i).equals(objeto)){
+                retorno= i;
+            }
+        }
+        return retorno;
     }
 
     public void cargarSpinnerEquipos(){
@@ -122,7 +192,12 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
         }
         SPN_eL.setAdapter(new ArrayAdapter<String>(this, R.layout.libre_veterano,list));
         SPN_eV.setAdapter(new ArrayAdapter<String>(this, R.layout.libre_veterano,list));
+        if (esModificar){
+            SPN_eL.setSelection(obtenerPosicionParaSpiines(list,unPartido.getEquipoLocal()));
+            SPN_eV.setSelection(obtenerPosicionParaSpiines(list,unPartido.getEquipoVisitante()));
+        }
     }
+
 
     private void eventosChackBox(){
         CheckBox_otradireccion.setOnClickListener(new View.OnClickListener() {
@@ -166,8 +241,14 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (SPN_eV.getSelectedItemPosition()!=0 && SPN_eL.getSelectedItemPosition()!=0) {
                     if (!SPN_eL.getSelectedItem().equals(SPN_eV.getSelectedItem())) {
-                        String[] item = {"Seleccionar EquipoLocal", SPN_eL.getSelectedItem().toString(), SPN_eV.getSelectedItem().toString()};
+                        ArrayList<String> item=new ArrayList<String>();
+                        item.add("Seleccionar Equipo Local");
+                        item.add( SPN_eL.getSelectedItem().toString());
+                        item.add(SPN_eV.getSelectedItem().toString());
                         SPN_canchaDe.setAdapter(new ArrayAdapter<String>(Act_CrearPartido.this, R.layout.libre_veterano, item));
+                        if (esModificar) {
+                            SPN_canchaDe.setSelection(obtenerPosicionParaSpiines(item, unPartido.getCanchaeDe()));
+                        }
                     } else {
                         Toast.makeText(Act_CrearPartido.this, "Los equipos deben ser distintos", Toast.LENGTH_LONG).show();
                         SPN_eV.setSelection(0);
@@ -184,6 +265,7 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position != 0) {
                     ET_direccionCancha.setText(principal.obtenerEquipo(parent.getSelectedItem().toString()).getDireccionCancha());
+                    CheckBox_otradireccion.setEnabled(true);
                 }
             }
             @Override
@@ -250,9 +332,7 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
     public void update(Observable observable, Object data) {
         if (data!=null){
             switch (data.toString()){
-                case "cargarEquipos":
-                    this.equipos=((Principal)observable).getEquipos();
-                    cargarSpinnerEquipos();
+                case "cargarTodo":
                     cargarView();
                     break;
                 case "Error de conexión":
@@ -266,6 +346,7 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
                     Toast.makeText(this,"No se pudo crear éste partido",Toast.LENGTH_LONG).show();
                     break;
             }
+            pDialog.ofProgressDialog();
 
         }
     }

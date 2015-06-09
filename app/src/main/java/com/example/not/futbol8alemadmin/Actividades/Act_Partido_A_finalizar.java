@@ -14,12 +14,15 @@ import android.widget.TextView;
 import com.example.not.futbol8alemadmin.Adaptares.AdapterDato;
 import com.example.not.futbol8alemadmin.Adaptares.Datos;
 import com.example.not.futbol8alemadmin.Logica.Partido;
+import com.example.not.futbol8alemadmin.Logica.Principal;
 import com.example.not.futbol8alemadmin.R;
 
 import java.util.ArrayList;
 
 
 public class Act_Partido_A_finalizar extends ActionBarActivity {
+
+    private Principal principal;
 
     private Partido unPartido;
 
@@ -34,6 +37,8 @@ public class Act_Partido_A_finalizar extends ActionBarActivity {
         setContentView(R.layout.activity_act__partido__a_finalizar);
         LV_listaPrincipal=(ListView)findViewById(R.id.LV_Partidos_a_finalizar);
         unPartido =(Partido)getIntent().getSerializableExtra("partido");
+        principal=(Principal)getIntent().getSerializableExtra("principal");
+        setTitle("Un Partido "+principal.queAdministro());
         cargarView();
         ArrayList<String> o=new ArrayList<>();
         LV_listaPrincipal.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, o));
@@ -61,6 +66,7 @@ public class Act_Partido_A_finalizar extends ActionBarActivity {
         mostrarEquipos();
         mostrarDatos();
         mostrarBotonTerminaFinalizarPartido();
+        eventosBotones();
     }
 
     public void mostrarEquipos(){
@@ -106,7 +112,20 @@ public class Act_Partido_A_finalizar extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(Act_Partido_A_finalizar.this,Act_CrearPartido.class);
-                intent.putExtra("patido",unPartido);
+                intent.putExtra("modificar",true);
+                intent.putExtra("unPartido",unPartido);
+                intent.putExtra("principal", principal);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        this.BTN_finalizarPartdo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(Act_Partido_A_finalizar.this,Act_finalizarPartido.class);
+                intent.putExtra("unPartido",unPartido);
+                intent.putExtra("principal", principal);
                 startActivity(intent);
                 finish();
             }
