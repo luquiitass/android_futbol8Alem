@@ -45,6 +45,7 @@ public class Act_partidos extends ActionBarActivity implements Observer{
     @Override
     protected void onRestart() {
         super.onRestart();
+        LV_partidos.removeAllViews();
         pDialog.onProgresSDialog(this,"Cargando...");
         principal.obtenerPartidos();
     }
@@ -99,5 +100,7 @@ public class Act_partidos extends ActionBarActivity implements Observer{
     public void cargarListViewPartidos(){
         LV_partidos.setAdapter(new AdapterPartido(this,principal.getPartidosNoJugados()));
     }
+
+
 
 }

@@ -75,6 +75,7 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
 
         principal=(Principal)getIntent().getSerializableExtra("principal");
         principal.addObserver(this);
+        pDialog.onProgresSDialog(this,"Cargando...");
         principal.obtenerPartidosEquipos();
 
         if (getIntent().getBooleanExtra("modificar",false)){
@@ -87,7 +88,6 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
         }else{
             esModificar=false;
             setTitle("Crear partido " + principal.queAdministro());
-            pDialog.onProgresSDialog(this, "Cargando...");
             BTN_Crear_Modificar.setText("Crear Partido");
         }
 
@@ -108,11 +108,8 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
         if (SPN_eL.getSelectedItemPosition()!=0 && SPN_eL.getSelectedItemPosition()!=0){
             if (SPN_canchaDe.getSelectedItemPosition()!=0){
                 if (!ET_direccionCancha.getText().toString().equals("")){
-                    try {
                         pDialog.onProgresSDialog(this,"Cargando...");
-                        principal.crearPartido(SPN_eL.getSelectedItem().toString(), SPN_eV.getSelectedItem().toString(), SPN_canchaDe.getSelectedItem().toString(), ET_direccionCancha.getText().toString(), ET_fecha.getText().toString(), ET_hora.getText().toString());
-                    } catch (Exepcion exepcion) {
-                    }
+                        principal.modificarPartido(unPartido.getId_partido(),SPN_eL.getSelectedItem().toString(), SPN_eV.getSelectedItem().toString(), SPN_canchaDe.getSelectedItem().toString(), ET_direccionCancha.getText().toString(), ET_fecha.getText().toString(), ET_hora.getText().toString());
                 }else{Toast.makeText(this,"Debe colocar la dirección de la cancha del equipo local",Toast.LENGTH_SHORT).show();}
             }else{Toast.makeText(this,"Debe seleccione ell equipo Local",Toast.LENGTH_SHORT).show();
                 SPN_canchaDe.setFocusable(true);}

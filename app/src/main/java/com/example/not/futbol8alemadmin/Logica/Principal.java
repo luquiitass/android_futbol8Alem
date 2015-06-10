@@ -78,7 +78,9 @@ public class Principal extends Observable implements Serializable{
 
     public void obtenerPartidosEquipos() {
         String url="http://lucasdb1.esy.es/conectFutbol8/GetDatos.php";
-        operacionesSelectDB(url,"todo");
+        RequestParams par=new RequestParams();
+        par.put("libre",this.libre);
+        operacionesSelectDB(url,par,"todo");
     }
 
     /**
@@ -86,12 +88,16 @@ public class Principal extends Observable implements Serializable{
      */
     public void obtenerEquipos() {
         String url="http://lucasdb1.esy.es/conectFutbol8/GetEquipos2.php";
-        operacionesSelectDB(url,"equipos");
+        RequestParams par=new RequestParams();
+        par.put("libre",this.libre);
+        operacionesSelectDB(url,par,"equipos");
     }
 
     public void obtenerPartidos() {
         String url="http://lucasdb1.esy.es/conectFutbol8/GetPartidos2.php";
-        operacionesSelectDB(url,"partidos");
+        RequestParams par=new RequestParams();
+        par.put("libre",this.libre);
+        operacionesSelectDB(url,par,"partidos");
     }
 
 
@@ -128,7 +134,7 @@ public class Principal extends Observable implements Serializable{
             par.put("direc", unPartido.getDireccion());
             par.put("horaEncuentro", unPartido.getHora());
             par.put("fecha", unPartido.getFeha());
-            par.put("libre",unPartido.getLibre());
+            par.put("libre",this.libre);
             operacionesInsertDB(url, par, "partido");
         }else{throw new Exepcion("Ya está creado éste partido");}
     }
@@ -136,8 +142,19 @@ public class Principal extends Observable implements Serializable{
     /**
      * 
      */
-    public void modificarPartido() {
-        // TODO implement here
+    public void modificarPartido(int idPartido,String equipoLocal, String equipoVisitante, String canchaeDe, String direccion, String feha, String hora) {
+        Partido unPartido=new Partido(equipoLocal,equipoVisitante,canchaeDe,direccion,feha,hora,this.libre);
+            String url = "http://lucasdb1.esy.es/conectFutbol8/UpdateModificarPartido.php?";
+            RequestParams par = new RequestParams();
+            par.put("id_partido",idPartido);
+            par.put("eL", unPartido.getEquipoLocal());
+            par.put("eV", unPartido.getEquipoVisitante());
+            par.put("canchaDe", unPartido.getCanchaeDe());
+            par.put("direc", unPartido.getDireccion());
+            par.put("horaEncuentro", unPartido.getHora());
+            par.put("fecha", unPartido.getFeha());
+            par.put("libre",this.libre);
+            operacionesUpdateDB(url, par);
     }
 
     /**
@@ -227,10 +244,10 @@ public class Principal extends Observable implements Serializable{
 
     // Todo ------------------------Select a la base de datos---------------------------
 
-    public void operacionesSelectDB(String url,final String accion){
+    public void operacionesSelectDB(String url,RequestParams par,final String accion){
         AsyncHttpClient client = new AsyncHttpClient();
         try {
-            client.post(url, new AsyncHttpResponseHandler() {
+            client.post(url,par, new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     String response=new String(responseBody);
@@ -253,15 +270,13 @@ public class Principal extends Observable implements Serializable{
             setChanged();
             notifyObservers("Error de conexión");
         }
-        setChanged();
-        notifyObservers();
     }
 
     public void obtenerDatosJSON( String response,String accion){
         try {
             JSONArray jsonArray = new JSONArray(response);
             int ultimapos=0;
-            String estado="";
+            String estado="Error de conexión";
             if (accion.equals("partidos") || accion.equals("todo")){
                 try {
                     removerColeccionCompleta(this.partidos);
@@ -283,7 +298,7 @@ public class Principal extends Observable implements Serializable{
                 removerColeccionCompleta(this.equipos);
                 for (int i = ultimapos; i < jsonArray.length(); i++) {
 
-                    Equipo unEquipo = new Equipo(jsonArray.getJSONObject(i).getString("eq"), jsonArray.getJSONObject(i).getString("fI"), jsonArray.getJSONObject(i).getString("fR"), jsonArray.getJSONObject(i).getInt("libre"), jsonArray.getJSONObject(i).getString("dire"));
+                    Equipo unEquipo = new Equipo(jsonArray.getJSONObject(i).getString("eq"), jsonArray.getJSONObject(i).getString("fI"), jsonArray.getJSONObject(i).getString("fR"),this.libre, jsonArray.getJSONObject(i).getString("dire"));
                     equipos.add(unEquipo);
                 }
                 if (accion.equals("todo")){
@@ -296,6 +311,8 @@ public class Principal extends Observable implements Serializable{
             notifyObservers(estado);
         }catch (Exception e){
             e.printStackTrace();
+            setChanged();
+            notifyObservers("Error de conexión");
         }
 
     }
