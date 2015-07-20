@@ -8,6 +8,7 @@ import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.Serializable;
 import java.util.*;
@@ -27,7 +28,7 @@ public class Principal extends Observable implements Serializable{
         this.equipos=new ArrayList<Equipo>();
         this.partidos=new ArrayList<Partido>();
         this.libre=libre;
-    }
+    }//Constructor --Inicia las colecciones de equipos y partidos... indicando si se trata de equipos libres o veteranos
 
     public int getLibre() {
         return libre;
@@ -42,7 +43,7 @@ public class Principal extends Observable implements Serializable{
             return "Veteranos";
         }
         return "Libre";
-    }
+    } //retorna un cadena de texto indicando si se esta administrando la categoria veteranos o libres
 
     public ArrayList<Partido> getPartidos() {
         return partidos;
@@ -72,32 +73,32 @@ public class Principal extends Observable implements Serializable{
         return retorno;
     }
 
-    /**
-     * 
-     */
+    public ArrayList<String>getNombresEquipos(){
+        ArrayList<String> retorno=new ArrayList<String>();
+        for (Equipo unEquipo:this.equipos){
+            retorno.add(unEquipo.getNombreEquipo());
+        }
+        return retorno;
+    } //retorna un coleccion solamente con los nombres de los equipos
 
-    public void obtenerPartidosEquipos() {
-        String url="http://lucasdb1.esy.es/conectFutbol8/GetDatos.php";
-        RequestParams par=new RequestParams();
-        par.put("libre",this.libre);
-        operacionesSelectDB(url,par,"todo");
-    }
+    // Todo -------------------- metodos que trabajan con las colecciones locales --------------------
 
-    /**
-     * 
-     */
-    public void obtenerEquipos() {
-        String url="http://lucasdb1.esy.es/conectFutbol8/GetEquipos2.php";
-        RequestParams par=new RequestParams();
-        par.put("libre",this.libre);
-        operacionesSelectDB(url,par,"equipos");
-    }
+    private void eliminarEquipo(String nombreEquipo){
+        for (int i=0;i<this.equipos.size();i++){
+            if (this.equipos.get(i).getNombreEquipo().equals(nombreEquipo)){
+                this.equipos.remove(i);
+                i=equipos.size();
+            }
+        }
+    } //elemina un equipo de la coleccion local
 
-    public void obtenerPartidos() {
-        String url="http://lucasdb1.esy.es/conectFutbol8/GetPartidos2.php";
-        RequestParams par=new RequestParams();
-        par.put("libre",this.libre);
-        operacionesSelectDB(url,par,"partidos");
+    private void eliminarPartido(int id_partido){
+        for(int i=0;i<this.partidos.size();i++){
+            if (partidos.get(i).getId_partido()==id_partido){
+                partidos.remove(i);
+                i=partidos.size();
+            }
+        }
     }
 
 
@@ -108,8 +109,7 @@ public class Principal extends Observable implements Serializable{
             }
         }
         return null;
-    }
-
+    } // retorna el partido que contenga el id pasado por parametro
 
     public Boolean existePartido(Partido unPartido) {
         for (Partido partido:this.partidos){
@@ -118,12 +118,57 @@ public class Principal extends Observable implements Serializable{
             }
         }
         return false;
+    } // verifica si ya existe un partido con los mismo datos
+
+    public Equipo obtenerEquipo(String nombreEquipo) {
+        for (int i=0;i<this.equipos.size();i++){
+            if (equipos.get(i).getNombreEquipo().equals(nombreEquipo)){
+                return  equipos.get(i);
+            }
+        }
+        return null;
+    }// retorna el equipo que contenga el nombre pasado por parametro
+
+    public Boolean existeEquipo(String nombreEquipo) {
+        for (int i=0;i<this.equipos.size();i++){
+            if (equipos.get(i).getNombreEquipo().equals(nombreEquipo)){
+                return  true;
+            }
+        }
+        return false;
+    } //verifica si ya existe un equipo con el mismo nombre
+    /**
+     * 
+     */
+
+    public void obtenerPartidosEquipos_BD() {
+        String url="http://lucasdb1.esy.es/conectFutbol8/GetDatos.php";
+        RequestParams par=new RequestParams();
+        par.put("libre",this.libre);
+        operacionesSelectDB(url,par,"todo");
     }
 
     /**
      * 
      */
-    public void crearPartido(String equipoLocal, String equipoVisitante, String canchaeDe, String direccion, String feha, String hora)throws Exepcion {
+    public void obtenerEquipos_BD() {
+        String url="http://lucasdb1.esy.es/conectFutbol8/GetEquipos2.php";
+        RequestParams par=new RequestParams();
+        par.put("libre",this.libre);
+        operacionesSelectDB(url,par,"equipos");
+    }
+
+    public void obtenerPartidos_BD() {
+        String url="http://lucasdb1.esy.es/conectFutbol8/GetPartidos2.php";
+        RequestParams par=new RequestParams();
+        par.put("libre",this.libre);
+        operacionesSelectDB(url,par,"partidos");
+    }
+
+    /**
+     * 
+     */
+    public void crearPartido_BD(String equipoLocal, String equipoVisitante, String canchaeDe, String direccion, String feha, String hora)throws Exepcion {
         Partido unPartido=new Partido(equipoLocal,equipoVisitante,canchaeDe,direccion,feha,hora,this.libre);
         if (!existePartido(unPartido)) {
             String url = "http://lucasdb1.esy.es/conectFutbol8/PutPartido.php?";
@@ -133,61 +178,30 @@ public class Principal extends Observable implements Serializable{
             par.put("canchaDe", unPartido.getCanchaeDe());
             par.put("direc", unPartido.getDireccion());
             par.put("horaEncuentro", unPartido.getHora());
-            par.put("fecha", unPartido.getFeha());
+            par.put("fecha", unPartido.getFecha());
             par.put("libre",this.libre);
-            operacionesInsertDB(url, par, "partido");
+            unPartido.setFecha(feha);
+            operacionesInsertDB(url, par, "partido",unPartido);
         }else{throw new Exepcion("Ya está creado éste partido");}
     }
 
     /**
      * 
      */
-    public void modificarPartido(int idPartido,String equipoLocal, String equipoVisitante, String canchaeDe, String direccion, String feha, String hora) {
-        Partido unPartido=new Partido(equipoLocal,equipoVisitante,canchaeDe,direccion,feha,hora,this.libre);
-            String url = "http://lucasdb1.esy.es/conectFutbol8/UpdateModificarPartido.php?";
-            RequestParams par = new RequestParams();
-            par.put("id_partido",idPartido);
-            par.put("eL", unPartido.getEquipoLocal());
-            par.put("eV", unPartido.getEquipoVisitante());
-            par.put("canchaDe", unPartido.getCanchaeDe());
-            par.put("direc", unPartido.getDireccion());
-            par.put("horaEncuentro", unPartido.getHora());
-            par.put("fecha", unPartido.getFeha());
-            par.put("libre",this.libre);
-            operacionesUpdateDB(url, par);
+
+    public void eliminarPartido_BD(int id_partido) {
+        String url="http://lucasdb1.esy.es/conectFutbol8/DeletePartido.php?";
+        RequestParams par=new RequestParams();
+        par.put("libre",this.libre);
+        par.put("id_partido", id_partido);
+        operacionesDeletDB(url, par,"partido",String.valueOf(id_partido));
     }
+
 
     /**
      * 
      */
-    public void eliminarPartido() {
-
-    }
-
-
-    public Equipo obtenerEquipo(String nombreEquipo) {
-        for (int i=0;i<this.equipos.size();i++){
-            if (equipos.get(i).getNombreEquipo()==nombreEquipo){
-                return  equipos.get(i);
-            }
-        }
-        return null;
-    }
-
-
-    public Boolean existeEquipo(String nombreEquipo) {
-        for (int i=0;i<this.equipos.size();i++){
-            if (equipos.get(i).getNombreEquipo()==nombreEquipo){
-                return  true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * 
-     */
-    public void crearEquipo(String nombreEquipo,String fechaInicio,String direccionCancha)throws Exepcion {
+    public void crearEquipo_BD(String nombreEquipo, String fechaInicio, String direccionCancha)throws Exepcion {
 
         if (!existeEquipo(nombreEquipo)) {
             Equipo unEquipo=new Equipo(nombreEquipo,fechaInicio,direccionCancha,this.libre);
@@ -198,7 +212,10 @@ public class Principal extends Observable implements Serializable{
             par.put("fechaInicio", unEquipo.getFchaInicio());
             par.put("fechaRegistro",unEquipo.getFechaRegitro());
             par.put("libre", unEquipo.getLibre());
-            operacionesInsertDB(url,par,"equipo");
+            unEquipo.setFchaInicio(fechaInicio);
+            unEquipo.setFechaRegitro(unEquipo.getFechaRegFormAPP());
+
+            operacionesInsertDB(url,par,"equipo",unEquipo);
         }else{
             throw new Exepcion("Ya existe un equipo con este nombre");
         }
@@ -207,38 +224,18 @@ public class Principal extends Observable implements Serializable{
     /**
      * 
      */
-    public void modificarEquipo() {
-        // TODO implement here
-    }
 
-    /**
-     * 
-     */
-    public void eliminarEquipo() {
-        // TODO implement here
-    }
-
-    /**
-     * 
-     */
-    public void modificarResultaosPartido() {
-        // TODO implement here
-    }
-
-    /**
-     * 
-     */
-    public void finalizarPartido(Partido unPartido) {
-        String url="http://lucasdb1.esy.es/conectFutbol8/UpdateFinalizarPartido.php?";
+    public void eliminarEquipo_BD(String nombreEquipo) {
+        String url="http://lucasdb1.esy.es/conectFutbol8/DeleteEquipo.php?";
         RequestParams par=new RequestParams();
-        par.put("id_partido",unPartido.getId_partido());
-        par.put("GL",unPartido.getGolesLocal());
-        par.put("GV",unPartido.getGolesVisitante());
-        par.put("ganador",unPartido.getGanador());
-        par.put("jugado",1);
-        operacionesUpdateDB(url,par);
+        par.put("nombreEquipo",nombreEquipo);
+        par.put("libre",this.libre);
+        operacionesDeletDB(url, par, "equipo", nombreEquipo);
     }
 
+    /**
+     * 
+     */
 
 
 
@@ -247,17 +244,18 @@ public class Principal extends Observable implements Serializable{
     public void operacionesSelectDB(String url,RequestParams par,final String accion){
         AsyncHttpClient client = new AsyncHttpClient();
         try {
-            client.post(url,par, new AsyncHttpResponseHandler() {
+            client.post(url, par, new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    String response=new String(responseBody);
+                    String response = new String(responseBody);
                     if (statusCode == 200) {
-                        obtenerDatosJSON(response,accion);
-                    }else{
+                        obtenerDatosJSON(response, accion);
+                    } else {
                         setChanged();
                         notifyObservers("Error de conexión");
                     }
                 }
+
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                     setChanged();
@@ -275,83 +273,123 @@ public class Principal extends Observable implements Serializable{
     public void obtenerDatosJSON( String response,String accion){
         try {
             JSONArray jsonArray = new JSONArray(response);
-            int ultimapos=0;
-            String estado="Error de conexión";
-            if (accion.equals("partidos") || accion.equals("todo")){
-                try {
-                    removerColeccionCompleta(this.partidos);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        ultimapos = i;
-                        Boolean jugado = false;
-                        if (jsonArray.getJSONObject(i).getString("jugado").equals("1")) {
-                            jugado = true;
-                        }
-                        Partido unPartido = new Partido(jsonArray.getJSONObject(i).getInt("part"), jsonArray.getJSONObject(i).getString("eqL"), jsonArray.getJSONObject(i).getString("eqV"), jsonArray.getJSONObject(i).getInt("glL"), jsonArray.getJSONObject(i).getInt("glV"), jsonArray.getJSONObject(i).getString("canchaDe"), jsonArray.getJSONObject(i).getString("direccion"), jsonArray.getJSONObject(i).getString("fecha"), jsonArray.getJSONObject(i).getString("hora"), jsonArray.getJSONObject(i).getString("jugado"), jugado);
-                        this.partidos.add(unPartido);
-                    }
-                    estado = "cargarPartidos";
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-            if (accion.equals("equipos") || accion.equals("todo")){
-                removerColeccionCompleta(this.equipos);
-                for (int i = ultimapos; i < jsonArray.length(); i++) {
+            String estado = "Error de conexión";
 
-                    Equipo unEquipo = new Equipo(jsonArray.getJSONObject(i).getString("eq"), jsonArray.getJSONObject(i).getString("fI"), jsonArray.getJSONObject(i).getString("fR"),this.libre, jsonArray.getJSONObject(i).getString("dire"));
-                    equipos.add(unEquipo);
+                int ultimapos = 0;
+                if (accion.equals("partidos") || accion.equals("todo")) {
+                    /*try {
+                        this.partidos.clear();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            ultimapos = i;
+                            Boolean jugado = false;
+                            if (jsonArray.getJSONObject(i).getString("jugado").equals("1")) {
+                                jugado = true;
+                            }
+                            Partido unPartido = new Partido(jsonArray.getJSONObject(i).getInt("part"), jsonArray.getJSONObject(i).getString("eqL"), jsonArray.getJSONObject(i).getString("eqV"), jsonArray.getJSONObject(i).getInt("glL"), jsonArray.getJSONObject(i).getInt("glV"), jsonArray.getJSONObject(i).getString("canchaDe"), jsonArray.getJSONObject(i).getString("direccion"), jsonArray.getJSONObject(i).getString("fecha"), jsonArray.getJSONObject(i).getString("hora"), jsonArray.getJSONObject(i).getString("jugado"), jugado);
+                            this.partidos.add(unPartido);
+                        }
+                        estado = "cargarPartidos";
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }*/
+                    ultimapos=obtenerJSONPartidos(jsonArray);
+                    estado = "cargarPartidos";
                 }
-                if (accion.equals("todo")){
-                    estado="cargarTodo";
-                }else{
-                    estado="cargarEquipos";
+                if (accion.equals("equipos") || accion.equals("todo")) {
+                    /*this.equipos.clear();
+                    for (int i = ultimapos; i < jsonArray.length(); i++) {
+
+                        Equipo unEquipo = new Equipo(jsonArray.getJSONObject(i).getString("eq"), jsonArray.getJSONObject(i).getString("fI"), jsonArray.getJSONObject(i).getString("fR"), this.libre, jsonArray.getJSONObject(i).getString("dire"));
+                        equipos.add(unEquipo);
+                    }*/
+                    obtenerJSONEquipos(jsonArray,ultimapos);
+                    if (accion.equals("todo")) {
+                        estado = "cargarTodo";
+                    } else {
+                        estado = "cargarEquipos";
+                    }
                 }
-            }
             setChanged();
             notifyObservers(estado);
         }catch (Exception e){
-            e.printStackTrace();
             setChanged();
             notifyObservers("Error de conexión");
         }
 
     }
 
+    private int obtenerJSONPartidos(JSONArray jsonArray) {
+        int retorno=0;
+        try {
+            this.partidos.clear();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                retorno = i;
+                Boolean jugado = false;
+                if (jsonArray.getJSONObject(i).getString("jugado").equals("1")) {
+                    jugado = true;
+                }
+                Partido unPartido = new Partido(jsonArray.getJSONObject(i).getInt("part"), jsonArray.getJSONObject(i).getString("eqL"), jsonArray.getJSONObject(i).getString("eqV"), jsonArray.getJSONObject(i).getInt("glL"), jsonArray.getJSONObject(i).getInt("glV"), jsonArray.getJSONObject(i).getString("canchaDe"), jsonArray.getJSONObject(i).getString("direccion"), jsonArray.getJSONObject(i).getString("fecha"), jsonArray.getJSONObject(i).getString("hora"), jsonArray.getJSONObject(i).getString("jugado"), jugado);
+                this.partidos.add(unPartido);
+            }
+        }catch (Exception e){
+            return retorno;
+        }
+        return retorno;
+    }
+
+    private int obtenerJSONEquipos(JSONArray jsonArray,int ultimapos){
+        int retorno=ultimapos;
+        try {
+            this.equipos.clear();
+            for (int i = ultimapos; i < jsonArray.length(); i++) {
+
+                Equipo unEquipo = new Equipo(jsonArray.getJSONObject(i).getString("eq"), jsonArray.getJSONObject(i).getString("fI"), jsonArray.getJSONObject(i).getString("fR"), this.libre, jsonArray.getJSONObject(i).getString("dire"));
+                equipos.add(unEquipo);
+            }
+        }catch (Exception e){
+            return retorno;
+        }
+        return retorno;
+    }
+
 
     // Todo ----------------------Insert a la base de adtos-------------------------------------------
-    public void operacionesInsertDB(String url,RequestParams par, final String accion){
+    public void operacionesInsertDB(String url,RequestParams par, final String accion,final Object object){
         AsyncHttpClient client = new AsyncHttpClient();
         try {
-            client.post(url,par, new AsyncHttpResponseHandler() {
+            client.post(url, par, new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    String response=new String(responseBody);
+                    String estado = "Error de conexión";
+                    String response = new String(responseBody);
                     if (statusCode == 200) {
-                        switch (accion){
+                        switch (accion) {
                             case "equipo":
-                                if (response.equals("Insertado")){
-                                    setChanged();
-                                    notifyObservers("equipoInsertado");
-                                }else{
-                                    setChanged();
-                                    notifyObservers("equipoNoInsertado");
+                                if (response.equals("Insertado")) {
+                                    estado = "equipoInsertado";
+                                    equipos.add((Equipo)object);
+                                } else {
+                                    estado = "equipoNoInsertado";
                                 }
                                 break;
                             case "partido":
-                                if (response.equals("Insertado")){
-                                    setChanged();
-                                    notifyObservers("partidoInsertado");
-                                }else{
-                                    setChanged();
-                                    notifyObservers("partidoNoInsertado");
+                                if (response.equals("Insertado")) {
+                                    estado = "partidoInsertado";
+                                    partidos.add((Partido)object);
+                                } else {
+                                    estado = "partidoNoInsertado";
                                 }
                                 break;
                         }
-                    }else{
+                        setChanged();
+                        notifyObservers(estado);
+
+                    } else {
                         setChanged();
                         notifyObservers("Error de conexión");
                     }
                 }
+
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                     setChanged();
@@ -367,7 +405,8 @@ public class Principal extends Observable implements Serializable{
 
 
     // Todo ----------------------Update a la base de adtos-------------------------------------------
-    public void operacionesUpdateDB(String url,RequestParams par){
+
+    public void operacionesDeletDB(String url,RequestParams par,final String accion,final String id){
         AsyncHttpClient client = new AsyncHttpClient();
         try {
             client.post(url,par, new AsyncHttpResponseHandler() {
@@ -376,12 +415,18 @@ public class Principal extends Observable implements Serializable{
                     String retorno=new String(responseBody);
                     String estado="";
                     if (statusCode == 200) {
-                        if (retorno.equals("Actualizado ")) {
-                            estado = "Actualizado";
-
-
+                        if (retorno.equals("borrado")) {
+                            estado = "borrado";
+                            switch (accion){
+                                case "equipo":
+                                    eliminarEquipo(id);
+                                    break;
+                                case "partido":
+                                    eliminarPartido(Integer.parseInt(id));
+                                    break;
+                            }
                         } else {
-                            estado = "noActualizado";
+                            estado = "noBorrado";
                         }
                     }else{
                         estado="Error de conexión";
@@ -401,13 +446,5 @@ public class Principal extends Observable implements Serializable{
             notifyObservers("Error de conexión");
         }
     }
-
-    private void removerColeccionCompleta(ArrayList list){
-        for (int i=0;i<list.size();i++){
-            list.remove(i);
-        }
-    }
-
-
 
 }
