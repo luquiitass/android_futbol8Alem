@@ -3,19 +3,18 @@ package com.example.not.futbol8alemadmin.Actividades;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
 import com.example.not.futbol8alemadmin.Logica.Principal;
 import com.example.not.futbol8alemadmin.R;
 
-import java.util.Observable;
-import java.util.Observer;
 
+public class Act_Inicio extends ActionBarActivity {
 
-public class Act_Inicio extends ActionBarActivity implements Observer{
+    private int request_code=1;
 
     private Principal principal;
 
@@ -31,8 +30,7 @@ public class Act_Inicio extends ActionBarActivity implements Observer{
             libre=0;
         }
         this.principal=new Principal(libre);
-        setTitle("Adm Equipos "+principal.queAdministro());
-        principal.addObserver(this);
+        setTitle("Adm Equipos C."+principal.queAdministro());
     }
 
 // Todo------------------Metodos de super Calse--------------
@@ -45,38 +43,53 @@ public class Act_Inicio extends ActionBarActivity implements Observer{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
 
 
 // TODO ---------------mis metodos--------------
-    public void registrarUsuarioOnClick(View view){
-        Intent intent=new Intent(this,Act_RegistrarEquipo.class);
-        intent.putExtra("principal",this.principal);
+    public void irEquiposOnClick(View view){
+        Intent intent=new Intent(this,Act_Equipos.class);
+        intent.putExtra("principal", this.principal);
         startActivity(intent);
     }
 
-    public void crearPartidoOnClick(View view){
-        Intent intent=new Intent(this,Act_CrearPartido.class);
+    public void irPartidosOnClick(View view){
+        Intent intent=new Intent(this,Act_Partidoss.class);
         intent.putExtra("principal",this.principal);
-        startActivity(intent);
+        startActivityForResult(intent,request_code);
     }
 
     public void finalizarPartidoOnClick(View view){
-        Intent intent=new Intent(this,Act_partidos.class);
-        intent.putExtra("principal",this.principal);
-        startActivity(intent);
+        Intent intent=new Intent(this,Act_Resultados.class);
+        intent.putExtra("principal", this.principal);
+        startActivityForResult(intent,request_code);
+    }
+
+
+    public void devolverPrincipal(){
+        Intent intent=new Intent();
+        intent.putExtra("principal", principal);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     @Override
-    public void update(Observable observable, Object data) {
-        if (data.equals("cargado")){
-            Button bot=(Button)findViewById(R.id.BTN_ini_registrarEquipo);
-            bot.setClickable(true);
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode){
+            case KeyEvent.KEYCODE_BACK:
+                devolverPrincipal();
+                return true;
+        }
+        return false;
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if ((requestCode==request_code)&&(resultCode==RESULT_OK)){
+            principal=(Principal)data.getSerializableExtra("principal");
         }
     }
 }

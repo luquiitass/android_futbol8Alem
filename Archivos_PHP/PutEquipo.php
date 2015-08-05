@@ -15,7 +15,7 @@ if ($equipo!="" & $direccion!="") {
 	if (mysqli_query($conexion, $sql)) {
 	 	echo "Insertado";
 	 }else{
-	 	echo "no incertado";
+	 	echo "no insertado";
 	 }; // Cerramos la conexion con la base de datos
 	
 }else{

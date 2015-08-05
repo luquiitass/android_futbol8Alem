@@ -1,5 +1,13 @@
 package com.example.not.futbol8alemadmin.Logica;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,7 +16,7 @@ import java.util.*;
 /**
  * 
  */
-public class Equipo {
+public class Equipo extends Observable implements Serializable{
 
     protected String nombreEquipo;
     private String fechaInicio;
@@ -151,6 +159,10 @@ public class Equipo {
         return  formatoSalida.format(calendar.getTime());
     }
 
+    public String getFechaRegFormAPP(){
+        return formatAPPFecha(fechaRegitro);
+    }
+
     private String formatBDFecha(String fecha){
         DateFormat format= new SimpleDateFormat("yyyy-MM-dd");
         DateFormat formatoSalida= new SimpleDateFormat("dd/MM/yyyy");
@@ -171,7 +183,7 @@ public class Equipo {
         return  formatoSalida.format(calendar.getTime());
     }
 
-    public Calendar getFechadeInicioCalendar(String fecha){
+    public Calendar getFechadeInicioCalendar(){
         DateFormat format= new SimpleDateFormat("dd/MM/yyyy");
         Calendar calendar= Calendar.getInstance();
 
@@ -191,5 +203,53 @@ public class Equipo {
     public void obtenerPartidos() {
         // TODO implement here
     }
+
+
+    public void modificarEquipo_BD(final String nombreEquipoV,final String m_nombreEquipoN,final String m_fechaInicio,final String m_direccionCancha){
+
+        String url="http://lucasdb1.esy.es/conectFutbol8/UpdateEquipo.php?";
+        RequestParams par=new RequestParams();
+        par.put("nombreEV",nombreEquipoV);
+        par.put("nombreEN",m_nombreEquipoN);
+        par.put("fechaInicio",formatBDFecha(m_fechaInicio));
+        par.put("dire",m_direccionCancha);
+        par.put("libre",this.libre);
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        try {
+            client.post(url,par, new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    String retorno=new String(responseBody);
+                    String estado="";
+                    if (statusCode == 200) {
+                        if (retorno.equals("Actualizado")) {
+                            estado = "Actualizado";
+                            nombreEquipo=m_nombreEquipoN;
+                            direccionCancha=m_direccionCancha;
+                            fechaInicio=m_fechaInicio;
+                        } else {
+                            estado = "noActualizado";
+                        }
+                    }else{
+                        estado="Error de conexión";
+                    }
+                    setChanged();
+                    notifyObservers(estado);
+                }
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    setChanged();
+                    notifyObservers("Error de conexión");
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+            setChanged();
+            notifyObservers("Error de conexión");
+        }
+    }
+
+
 
 }

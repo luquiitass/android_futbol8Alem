@@ -1,7 +1,9 @@
 package com.example.not.futbol8alemadmin.Actividades;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,10 +38,12 @@ public class Act_finalizarPartido extends ActionBarActivity implements Observer{
         SPN_GV=(Spinner)findViewById(R.id.SPN_FinalizarPartido_GV);
         principal=(Principal)getIntent().getSerializableExtra("principal");
         principal.addObserver(this);
-        unPartido=(Partido)getIntent().getSerializableExtra("unPartido");
-        setTitle("Finalizar Partido "+principal.queAdministro());
+        unPartido=principal.obtenerPartido(getIntent().getIntExtra("unPartido",-1));
+        unPartido.addObserver(this);
+        setTitle(getString(R.string.LG_finalizarPartido)+" "+principal.queAdministro());
         cargarView();
     }
+
 
 
     @Override
@@ -51,10 +55,6 @@ public class Act_finalizarPartido extends ActionBarActivity implements Observer{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -66,28 +66,16 @@ public class Act_finalizarPartido extends ActionBarActivity implements Observer{
         ET_eV.setText(unPartido.getEquipoVisitante());
         String[]items={"Seleccionar","0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"};
         SPN_GL.setAdapter(new ArrayAdapter<String>(this,R.layout.libre_veterano, items));
-        SPN_GV.setAdapter(new ArrayAdapter<String>(this,R.layout.libre_veterano, items));
+        SPN_GV.setAdapter(new ArrayAdapter<String>(this, R.layout.libre_veterano, items));
     }
 
     public void actualizarResultadoPartido(View view){
-        pDialog.onProgresSDialog(this,"Cargando resultados...");
-
-        if (SPN_GL.getSelectedItemPosition()!=0&& SPN_GV.getSelectedItemPosition()!=0){
-            int gL,gV;
-            gL=Integer.valueOf(SPN_GL.getSelectedItem().toString());
-            gV=Integer.valueOf(SPN_GV.getSelectedItem().toString());
-            unPartido.setGolesLocal(gL);
-            unPartido.setGolesVisitante(gV);
-            if (gL<gV){
-                unPartido.setGanador(unPartido.getEquipoVisitante());
-            }else if (gL>gV){
-                unPartido.setGanador(unPartido.getEquipoLocal());
-            }else if (gL==gV){
-                unPartido.setGanador("Empatado");
-            }
-            unPartido.setJugado(true);
+        if (SPN_GL.getSelectedItemPosition()!=0 && SPN_GV.getSelectedItemPosition()!=0) {
+            pDialog.onProgresSDialog(this, getString(R.string.LG_cargandoResultados));
+            unPartido.modificarResultados(Integer.parseInt(SPN_GL.getSelectedItem().toString()),Integer.parseInt(SPN_GV.getSelectedItem().toString()));
+        }else {
+            Toast.makeText(this,getString(R.string.LG_debeColocarLosGolesEnAmbosPartidos),Toast.LENGTH_LONG).show();
         }
-        principal.finalizarPartido(unPartido);
     }
 
     @Override
@@ -95,17 +83,38 @@ public class Act_finalizarPartido extends ActionBarActivity implements Observer{
         if (data!=null){
             switch (data.toString()){
                 case "Actualizado":
-                    Toast.makeText(this,"Partido Finalizado correctamente",Toast.LENGTH_LONG).show();
-                    finish();
+                    Toast.makeText(this,getString(R.string.LG_resultadoModificado),Toast.LENGTH_LONG).show();
+                    devolverPrincipal(true);
                     break;
                 case  "noActualizado":
-                    Toast.makeText(this,"No se Pudo colocar los resultados",Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,getResources().getString(R.string.LG_noSePudoFinalizarElPartido),Toast.LENGTH_LONG).show();
                     break;
                 case "Error de Conexión":
-                    Toast.makeText(this,"Error de Conexión",Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,getResources().getText(R.string.LG_errorDeConexion),Toast.LENGTH_LONG).show();
                     break;
             }
             pDialog.ofProgressDialog();
         }
+    }
+
+
+
+
+    public void devolverPrincipal(Boolean finalizar){
+        Intent intent=new Intent();
+        intent.putExtra("principal", principal);
+        intent.putExtra("finalizar",finalizar);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode){
+            case KeyEvent.KEYCODE_BACK:
+                devolverPrincipal(false);
+                return true;
+        }
+        return false;
     }
 }

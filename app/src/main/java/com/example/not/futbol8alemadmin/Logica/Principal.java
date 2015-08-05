@@ -18,6 +18,7 @@ import java.util.*;
  */
 public class Principal extends Observable implements Serializable{
 
+    private static final String ERRORCONEXION="Error de conexíon";
     private ArrayList<Equipo> equipos;
     private ArrayList<Partido> partidos;
     private int libre=-1;
@@ -252,56 +253,35 @@ public class Principal extends Observable implements Serializable{
                         obtenerDatosJSON(response, accion);
                     } else {
                         setChanged();
-                        notifyObservers("Error de conexión");
+                        notifyObservers(ERRORCONEXION);
                     }
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                     setChanged();
-                    notifyObservers("Error de conexión");
+                    notifyObservers(ERRORCONEXION);
                 }
 
             });
         }catch (Exception e){
             e.printStackTrace();
             setChanged();
-            notifyObservers("Error de conexión");
+            notifyObservers(ERRORCONEXION);
         }
     }
 
     public void obtenerDatosJSON( String response,String accion){
         try {
             JSONArray jsonArray = new JSONArray(response);
-            String estado = "Error de conexión";
+            String estado = ERRORCONEXION;
 
                 int ultimapos = 0;
                 if (accion.equals("partidos") || accion.equals("todo")) {
-                    /*try {
-                        this.partidos.clear();
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            ultimapos = i;
-                            Boolean jugado = false;
-                            if (jsonArray.getJSONObject(i).getString("jugado").equals("1")) {
-                                jugado = true;
-                            }
-                            Partido unPartido = new Partido(jsonArray.getJSONObject(i).getInt("part"), jsonArray.getJSONObject(i).getString("eqL"), jsonArray.getJSONObject(i).getString("eqV"), jsonArray.getJSONObject(i).getInt("glL"), jsonArray.getJSONObject(i).getInt("glV"), jsonArray.getJSONObject(i).getString("canchaDe"), jsonArray.getJSONObject(i).getString("direccion"), jsonArray.getJSONObject(i).getString("fecha"), jsonArray.getJSONObject(i).getString("hora"), jsonArray.getJSONObject(i).getString("jugado"), jugado);
-                            this.partidos.add(unPartido);
-                        }
-                        estado = "cargarPartidos";
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }*/
                     ultimapos=obtenerJSONPartidos(jsonArray);
                     estado = "cargarPartidos";
                 }
                 if (accion.equals("equipos") || accion.equals("todo")) {
-                    /*this.equipos.clear();
-                    for (int i = ultimapos; i < jsonArray.length(); i++) {
-
-                        Equipo unEquipo = new Equipo(jsonArray.getJSONObject(i).getString("eq"), jsonArray.getJSONObject(i).getString("fI"), jsonArray.getJSONObject(i).getString("fR"), this.libre, jsonArray.getJSONObject(i).getString("dire"));
-                        equipos.add(unEquipo);
-                    }*/
                     obtenerJSONEquipos(jsonArray,ultimapos);
                     if (accion.equals("todo")) {
                         estado = "cargarTodo";
@@ -313,7 +293,7 @@ public class Principal extends Observable implements Serializable{
             notifyObservers(estado);
         }catch (Exception e){
             setChanged();
-            notifyObservers("Error de conexión");
+            notifyObservers(ERRORCONEXION);
         }
 
     }
@@ -337,8 +317,7 @@ public class Principal extends Observable implements Serializable{
         return retorno;
     }
 
-    private int obtenerJSONEquipos(JSONArray jsonArray,int ultimapos){
-        int retorno=ultimapos;
+    private void obtenerJSONEquipos(JSONArray jsonArray,int ultimapos){
         try {
             this.equipos.clear();
             for (int i = ultimapos; i < jsonArray.length(); i++) {
@@ -347,9 +326,7 @@ public class Principal extends Observable implements Serializable{
                 equipos.add(unEquipo);
             }
         }catch (Exception e){
-            return retorno;
         }
-        return retorno;
     }
 
 
@@ -360,7 +337,7 @@ public class Principal extends Observable implements Serializable{
             client.post(url, par, new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    String estado = "Error de conexión";
+                    String estado = ERRORCONEXION;
                     String response = new String(responseBody);
                     if (statusCode == 200) {
                         switch (accion) {
@@ -386,20 +363,20 @@ public class Principal extends Observable implements Serializable{
 
                     } else {
                         setChanged();
-                        notifyObservers("Error de conexión");
+                        notifyObservers(ERRORCONEXION);
                     }
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                     setChanged();
-                    notifyObservers("Error de conexión");
+                    notifyObservers(ERRORCONEXION);
                 }
             });
         }catch (Exception e){
             e.printStackTrace();
             setChanged();
-            notifyObservers("Error de conexión");
+            notifyObservers(ERRORCONEXION);
         }
     }
 
@@ -413,7 +390,7 @@ public class Principal extends Observable implements Serializable{
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     String retorno=new String(responseBody);
-                    String estado="";
+                    String estado=ERRORCONEXION;
                     if (statusCode == 200) {
                         if (retorno.equals("borrado")) {
                             estado = "borrado";
@@ -429,7 +406,7 @@ public class Principal extends Observable implements Serializable{
                             estado = "noBorrado";
                         }
                     }else{
-                        estado="Error de conexión";
+                        estado=ERRORCONEXION;
                     }
                     setChanged();
                     notifyObservers(estado);
@@ -437,13 +414,12 @@ public class Principal extends Observable implements Serializable{
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                     setChanged();
-                    notifyObservers("Error de conexión");
+                    notifyObservers(ERRORCONEXION);
                 }
             });
         }catch (Exception e){
-            e.printStackTrace();
             setChanged();
-            notifyObservers("Error de conexión");
+            notifyObservers(ERRORCONEXION);
         }
     }
 

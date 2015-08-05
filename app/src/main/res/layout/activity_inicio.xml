@@ -5,25 +5,42 @@
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".Inicio">
 
-
-    <Button
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/registrarEquipo"
-        android:id="@+id/BTN_ini_registrarEquipo"
-        android:onClick="registrarUsuarioOnClick"/>
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        >
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/crearPartido"
-        android:id="@+id/BTN_ini_crearPartido"
-        android:onClick="crearPartidoOnClick"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:focusableInTouchMode="true">
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/finalizarPartido"
-        android:id="@+id/BTN_ini_finalizarPartido"
-        android:onClick="finalizarPartidoOnClick"/>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:src="@drawable/icon"/>
+
+            <Button
+                style="@style/BTN_gral"
+                android:text="@string/equipos"
+                android:id="@+id/BTN_ini_registrarEquipo"
+                android:onClick="irEquiposOnClick"/>
+
+            <Button
+                style="@style/BTN_gral"
+                android:text="@string/partidos"
+                android:id="@+id/BTN_ini_crearPartido"
+                android:onClick="irPartidosOnClick"/>
+
+            <Button
+                style="@style/BTN_gral"
+                android:text="@string/partidosFinalizados"
+                android:id="@+id/BTN_ini_finalizarPartido"
+                android:onClick="finalizarPartidoOnClick"/>
+
+        </LinearLayout>
+
+    </ScrollView>
 </LinearLayout>

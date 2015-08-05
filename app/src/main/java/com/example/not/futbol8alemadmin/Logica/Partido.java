@@ -1,5 +1,11 @@
 package com.example.not.futbol8alemadmin.Logica;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.apache.http.Header;
+
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -18,7 +24,7 @@ public class Partido extends Observable implements Serializable{
     private int golesVisitante;
     private String canchaeDe;
     private String direccion;
-    private String feha;
+    private String fecha;
     private String hora;
     private String ganador;
     private Boolean jugado;
@@ -34,9 +40,10 @@ public class Partido extends Observable implements Serializable{
         this.equipoVisitante = equipoVisitante;
         this.canchaeDe = canchaeDe;
         this.direccion = direccion;
-        this.feha = formatBDFecha(feha);
+        this.fecha = formatBDFecha(feha);
         this.hora = hora;
         this.libre=libre;
+        this.jugado=false;
     }
 
     public Partido(int id_partido, String equipoLocal, String equipoVisitante, int golesLocal, int golesVisitante, String canchaeDe, String direccion, String feha, String hora, String ganador, Boolean jugado) {
@@ -47,7 +54,7 @@ public class Partido extends Observable implements Serializable{
         this.golesVisitante = golesVisitante;
         this.canchaeDe = canchaeDe;
         this.direccion = direccion;
-        this.feha = formatAPPFecha(feha);
+        this.fecha = formatAPPFecha(feha);
         this.hora = hora;
         this.ganador = ganador;
         this.jugado = jugado;
@@ -111,12 +118,12 @@ public class Partido extends Observable implements Serializable{
         this.direccion = direccion;
     }
 
-    public String getFeha() {
-        return feha;
+    public String getFecha() {
+        return fecha;
     }
 
-    public void setFeha(String feha) {
-        this.feha = feha;
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
     }
 
     public String getHora() {
@@ -191,6 +198,18 @@ public class Partido extends Observable implements Serializable{
     /**
      * 
      */
+    private String obtenerGanador(int gL,int gV){
+        String ganador="";
+        if (gL<gV){
+            ganador=equipoVisitante;
+        }else if (gL>gV){
+            ganador=equipoLocal;
+        }else if (gL==gV){
+            ganador="Empatado";
+        }
+        return ganador;
+    }
+
     public void obtenerComentarios() {
         // TODO implement here
     }
@@ -205,15 +224,107 @@ public class Partido extends Observable implements Serializable{
     /**
      * 
      */
-    public void finalizarPartido() {
-        // TODO implement here
+    public void modificarResultados(final int gL, final int gV) {
+        String url="http://lucasdb1.esy.es/conectFutbol8/UpdateFinalizarPartido.php?";
+        RequestParams par=new RequestParams();
+        par.put("id_partido",id_partido);
+        par.put("GL",gL);
+        par.put("GV",gV);
+        par.put("ganador",obtenerGanador(gL,gV));
+        par.put("jugado",1);
+        par.put("libre",this.libre);
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        try {
+            client.post(url,par, new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    String retorno=new String(responseBody);
+                    String estado="";
+                    if (statusCode == 200) {
+                        if (retorno.equals("Actualizado ")) {
+                            estado = "Actualizado";
+                            golesLocal=gL;
+                            golesVisitante=gV;
+                            ganador=obtenerGanador(gL,gV);
+                            jugado=true;
+                        } else {
+                            estado = "noActualizado";
+                        }
+                    }else{
+                        estado="Error de conexión";
+                    }
+                    setChanged();
+                    notifyObservers(estado);
+                }
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    setChanged();
+                    notifyObservers("Error de conexión");
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+            setChanged();
+            notifyObservers("Error de conexión");
+        }
     }
 
 
     public boolean equals(Partido o) {
-        if((this.equipoLocal.equals(o.getEquipoLocal())||(this.equipoLocal.equals(o.getEquipoVisitante())))&& (this.equipoVisitante.equals(o.getEquipoVisitante())||(this.equipoLocal.equals(o.getEquipoVisitante()))) && this.feha.equals(formatAPPFecha(o.getFeha()))){
+        if((this.equipoLocal.equals(o.getEquipoLocal())||(this.equipoLocal.equals(o.getEquipoVisitante())))&& (this.equipoVisitante.equals(o.getEquipoVisitante())||(this.equipoLocal.equals(o.getEquipoVisitante()))) && this.fecha.equals(formatAPPFecha(o.getFecha())) && this.libre== o.libre){
             return true;
         }
         return false;
     }
+
+    public void modificarPartido_BD(int idPartido,final String m_equipoLocal,final String m_equipoVisitante,final String m_canchaeDe,final String m_direccion,final String m_feha,final String m_hora) {
+        String url = "http://lucasdb1.esy.es/conectFutbol8/UpdateModificarPartido.php?";
+        RequestParams par = new RequestParams();
+        par.put("id_partido",idPartido);
+        par.put("eL", equipoLocal);
+        par.put("eV", equipoVisitante);
+        par.put("canchaDe", canchaeDe);
+        par.put("direc", direccion);
+        par.put("horaEncuentro",hora);
+        par.put("fecha", formatBDFecha(fecha));
+        par.put("libre",this.libre);
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        try {
+            client.post(url,par, new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    String retorno=new String(responseBody);
+                    String estado="";
+                    if (statusCode == 200) {
+                        if (retorno.equals("Actualizado ")) {
+                            estado = "Actualizado";
+                            setEquipoLocal(m_equipoLocal);
+                            setEquipoVisitante(m_equipoVisitante);
+                            setCanchaeDe(m_canchaeDe);setDireccion(m_direccion);
+                            setHora(m_hora);
+                            setFecha(m_feha);
+                        } else {
+                            estado = "noActualizado";
+                        }
+                    }else{
+                        estado="Error de conexión";
+                    }
+                    setChanged();
+                    notifyObservers(estado);
+                }
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    setChanged();
+                    notifyObservers("Error de conexión");
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+            setChanged();
+            notifyObservers("Error de conexión");
+        }
+    }
+
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="textoExplicativo">#bc424242</color>
+    <color name="textDatosNombre">#f04192e7</color>
+    <color name="fondoCelecteClaro">#1310d3d2</color>
+    <color name="bordeFondoCeleste">#a7343434</color>
+
+</resources>

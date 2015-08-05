@@ -2,16 +2,20 @@ package com.example.not.futbol8alemadmin.Actividades;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.not.futbol8alemadmin.Exepcion.Exepcion;
+import com.example.not.futbol8alemadmin.Logica.Equipo;
 import com.example.not.futbol8alemadmin.Logica.Principal;
 import com.example.not.futbol8alemadmin.R;
 
@@ -22,8 +26,9 @@ import java.util.Observer;
 public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
 
     private Principal principal;
+    private Equipo unEquipo;
 
-
+    private Boolean modificarEquipo;
 
     private int año;
     private int mes;
@@ -46,22 +51,42 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
         ET_nombreEquipo=(EditText)findViewById(R.id.ET_regEquipo_nombreEquipo);
         ET_direccionCancha=(EditText)findViewById(R.id.ET_regEquipo_direccion);
         principal=(Principal)getIntent().getExtras().getSerializable("principal");
-        setTitle("Registrar equipo "+principal.queAdministro());
-        principal.getEquipos();
+        modificarEquipo=getIntent().getBooleanExtra("modificarUnEquipo",false);
+        if (!modificarEquipo) {
+            setTitle("Registrar Equipo C." + principal.queAdministro());
+            principal.getEquipos();
+        }else {
+            setTitle("Modificar Equipo C."+principal.queAdministro());
+            unEquipo=principal.obtenerEquipo(getIntent().getStringExtra("unEquipo"));
+            unEquipo.addObserver(this);
+            cargarViewParaModificar();
+            Button BTN_modificarDatosEquipos=(Button)findViewById(R.id.BTN_RE_registrarEquipo);
+            BTN_modificarDatosEquipos.setText("Confirmar modificaciones");
+        }
         principal.addObserver(this);
         cargarViewInicio();
+    }
+
+    private void cargarViewParaModificar(){
+        ET_nombreEquipo.setText(unEquipo.getNombreEquipo());
+        ET_direccionCancha.setText(unEquipo.getDireccionCancha());
     }
 
     public void registrarEquipo(View view) throws Exepcion {
         try {
                 if (!ET_nombreEquipo.getText().toString().equals("") && !ET_direccionCancha.getText().toString().equals("")) {
                     pDialog.onProgresSDialog(this,"Cargando...");
-                    this.principal.crearEquipo(ET_nombreEquipo.getText().toString(), ET_fechaInicio.getText().toString(), ET_direccionCancha.getText().toString());
+                    if (!modificarEquipo) {
+                        this.principal.crearEquipo_BD(ET_nombreEquipo.getText().toString(), ET_fechaInicio.getText().toString(), ET_direccionCancha.getText().toString());
+                    }else{
+                        unEquipo.modificarEquipo_BD(unEquipo.getNombreEquipo(), ET_nombreEquipo.getText().toString(), ET_fechaInicio.getText().toString(), ET_direccionCancha.getText().toString());
+                    }
                 }else {
                     Toast.makeText(this,"Debe completar todos los campos",Toast.LENGTH_LONG).show();
                 }
         }catch (Exepcion e){
             Toast.makeText(this,e.getMessage(),Toast.LENGTH_LONG).show();
+            pDialog.ofProgressDialog();
         }
     }
 
@@ -82,9 +107,6 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -93,10 +115,17 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
 
 
     public void cargargarFechaActual(){
-        final Calendar c= Calendar.getInstance();
-        año=c.get(Calendar.YEAR);
-        mes=c.get(Calendar.MONTH);
-        dia=c.get(Calendar.DAY_OF_MONTH);
+        if (!modificarEquipo) {
+            final Calendar c = Calendar.getInstance();
+            año = c.get(Calendar.YEAR);
+            mes = c.get(Calendar.MONTH);
+            dia = c.get(Calendar.DAY_OF_MONTH);
+        }else{
+            final Calendar c = unEquipo.getFechadeInicioCalendar();
+            año = c.get(Calendar.YEAR);
+            mes = c.get(Calendar.MONTH);
+            dia = c.get(Calendar.DAY_OF_MONTH);
+        }
         updateDisplay();
 
     }
@@ -131,14 +160,45 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
         if (data != null) {
             switch (data.toString()) {
                 case "equipoInsertado":
-                    this.finish();
-                    Toast.makeText(this, "Insertado exitosamente", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,getResources().getString(R.string.LG_partidoCreado), Toast.LENGTH_LONG).show();
+                    devolverPrincipal(false);
                     break;
                 case "equipoNoInsertado":
-                    Toast.makeText(this, "No se pudo registrar el equipo", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,getResources().getString(R.string.LG_noSePudoRegistrarEquipo), Toast.LENGTH_LONG).show();
+                    break;
+                case "Actualizado":
+                    Toast.makeText(this,getResources().getString(R.string.LG_equipoModificado),Toast.LENGTH_LONG).show();
+                    devolverPrincipal(true);
+                    break;
+                case "noActualizado":
+                    Toast.makeText(this,getResources().getString(R.string.LG_noSePudoModificar),Toast.LENGTH_LONG).show();
+                    break;
+                case "Error de conexión":
+                    Toast.makeText(this,getResources().getString(R.string.LG_errorDeConexion),Toast.LENGTH_LONG).show();
                     break;
             }
             pDialog.ofProgressDialog();
         }
+    }
+
+    public void devolverPrincipal(Boolean conEquipo){
+        Intent intent=new Intent();
+        intent.putExtra("principal", principal);
+        if(conEquipo) {
+            intent.putExtra("nombreE", unEquipo.getNombreEquipo());
+        }
+        intent.putExtra("recargar",true);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode){
+            case KeyEvent.KEYCODE_BACK:
+                devolverPrincipal(false);
+                return true;
+        }
+        return false;
     }
 }

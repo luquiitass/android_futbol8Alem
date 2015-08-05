@@ -1,11 +1,12 @@
 package com.example.not.futbol8alemadmin.Logica;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * 
  */
-public class Usuario {
+public class Usuario implements Serializable{
 
     protected String id_usuario;
     private String contraseña;

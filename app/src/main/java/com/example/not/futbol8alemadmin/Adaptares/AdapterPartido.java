@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.not.futbol8alemadmin.Logica.Partido;
+import com.example.not.futbol8alemadmin.Logica.Principal;
 import com.example.not.futbol8alemadmin.R;
 
 import java.util.List;
@@ -59,6 +60,12 @@ public class AdapterPartido extends ArrayAdapter<Partido> {
         viewHolder.hora.setText(list.get(position).getHora());
         viewHolder.lugar.setText(String.valueOf(list.get(position).getCanchaeDe()));
         return convertView;
+    }
+
+    public  void actualizar(Principal principal){
+        list.clear();
+        list.addAll(principal.getPartidosNoJugados());
+        this.notifyDataSetChanged();
     }
 }
 

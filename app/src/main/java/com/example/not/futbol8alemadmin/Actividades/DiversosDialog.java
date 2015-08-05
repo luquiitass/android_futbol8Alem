@@ -1,12 +1,15 @@
 package com.example.not.futbol8alemadmin.Actividades;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.widget.ProgressBar;
+import android.view.View;
 import android.widget.TextView;
+
+import com.example.not.futbol8alemadmin.R;
 
 
 public class DiversosDialog {

@@ -6,7 +6,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -27,11 +27,11 @@
             android:label="@string/title_activity_act__crear_partido" >
         </activity>
         <activity
-            android:name=".Actividades.Act_partidos"
+            android:name=".Actividades.Act_Partidoss"
             android:label="@string/title_activity_act_partidos" >
         </activity>
         <activity
-            android:name=".Actividades.Act_Partido_A_finalizar"
+            android:name=".Actividades.Act_unPartido"
             android:label="@string/title_activity_act__partido__a_finalizar" >
         </activity>
         <activity
@@ -41,6 +41,22 @@
         <activity
             android:name=".Actividades.Act_finalizarPartido"
             android:label="@string/title_activity_act_finalizar_partido" >
+        </activity>
+        <activity
+            android:name=".Actividades.Act_Equipos"
+            android:label="@string/title_activity_act__equipos" >
+        </activity>
+        <activity
+            android:name=".Actividades.Act_unEquipo"
+            android:label="@string/title_activity_act_un_equipo" >
+        </activity>
+        <activity
+            android:name=".Actividades.Act_Resultados"
+            android:label="@string/title_activity_act__resultados" >
+        </activity>
+        <activity
+            android:name=".Actividades.Act_unResultado"
+            android:label="@string/title_activity_act_un_resultado" >
         </activity>
     </application>
 

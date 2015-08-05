@@ -1,0 +1,198 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.not.futbol8alemadmin.Actividades.Act_unResultado">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_layout_fondo_celeste"
+                android:orientation="vertical"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:layout_gravity="top"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/TV_eqL"
+                        android:text="@string/equipoLocal"
+                        android:textSize="20dp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/UnPart_vs"
+                        android:text="@string/vs"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/TV_eqV"
+                        android:text="@string/equipoVisitante"
+                        android:textSize="20dp"
+                        android:textStyle="bold"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:id="@+id/TV_golesL"
+                        android:text="@string/golL"
+                        android:gravity="center"/>
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:id="@+id/TV_golesV"
+                        android:text="@string/golV"
+                        android:gravity="center"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/datosDelPartido"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    style="@style/Dat_TV"
+                    android:text="@string/canchaDe"
+                    android:textColor="@color/textDatosNombre"/>
+
+                <TextView
+                    style="@style/Dat_TV"
+                    android:id="@+id/TV_canchaDe"
+                    android:text="@string/canchaDe"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    style="@style/Dat_TV"
+                    android:text="@string/fecha"
+                    android:textColor="@color/textDatosNombre"/>
+
+                <TextView
+                    style="@style/Dat_TV"
+                    android:id="@+id/TV_fecha"
+                    android:text="@string/fecha"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    style="@style/Dat_TV"
+                    android:text="@string/hora"
+                    android:textColor="@color/textDatosNombre"/>
+
+                <TextView
+                    style="@style/Dat_TV"
+                    android:id="@+id/TV_hora"
+                    android:text="@string/hora"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    style="@style/Dat_TV"
+                    android:text="@string/direccion"
+                    android:textColor="@color/textDatosNombre"/>
+
+                <TextView
+                    style="@style/Dat_TV"
+                    android:id="@+id/TV_direccion"
+                    android:text="@string/direccion"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/operaciones"
+                android:gravity="center"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <ImageButton
+                    style="@style/BTN_gral"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/edit"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:onClick="modificarResultadosOnClick"/>
+
+                <ImageButton
+                    style="@style/BTN_gral"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/delet"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:onClick="eliminarPartidoOnClick"/>
+
+
+            </LinearLayout>
+            
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>

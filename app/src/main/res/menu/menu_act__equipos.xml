@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.not.futbol8alemadmin.Actividades.Act_Equipos">
+
+    <item android:id="@+id/action_bar_add"
+        android:title="@string/anadirEquipoa"
+        android:icon="@drawable/add"
+        app:showAsAction="always"
+        ></item>
+
+</menu>

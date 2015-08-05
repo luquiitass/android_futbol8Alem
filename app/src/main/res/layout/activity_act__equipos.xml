@@ -2,12 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context="com.example.not.futbol8alemadmin.Actividades.Act_Equipos">
 
-    tools:context="com.example.not.futbol8alemadmin.Actividades.Act_Partido_A_finalizar">
 
-    <ListView
+    <eu.erikw.PullToRefreshListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/LV_Partidos_a_finalizar"></ListView>
+        android:id="@+id/LV_principal"/>
 
 </RelativeLayout>

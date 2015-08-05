@@ -1,0 +1,126 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+
+    tools:context="com.example.not.futbol8alemadmin.Actividades.Act_unEquipo">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:gravity="center"
+                android:background="@drawable/bg_layout_fondo_celeste"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/equipo"
+                    android:id="@+id/TV_unEquipo_nombreEquipo"
+                    android:textSize="23dp"
+                    />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/datosDelEquipo"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="10dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TV_datosUnEquipo"
+                    android:text="@string/FechaInicio"
+                    android:textColor="@color/textDatosNombre"
+                    />
+                <TextView
+                    style="@style/TV_datosUnEquipo"
+                    android:layout_marginLeft="5dp"
+                    android:text="@string/FechaInicio"
+                    android:id="@+id/TV_unEquipo_fechaIni"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TV_datosUnEquipo"
+                    android:text="@string/registradoEl"
+                    android:textColor="@color/textDatosNombre"/>
+                <TextView
+                    style="@style/TV_datosUnEquipo"
+                    android:text="@string/registradoEl"
+                    android:layout_marginLeft="5dp"
+                    android:id="@+id/TV_unEquipo_fechaReg"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TV_datosUnEquipo"
+                    android:text="@string/direccion"
+                    android:textColor="@color/textDatosNombre"/>
+                <TextView
+                    style="@style/TV_datosUnEquipo"
+                    android:text="@string/direccion"
+                    android:layout_marginLeft="5dp"
+                    android:id="@+id/TV_unEquipo_direccion"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <ImageButton
+                    style="@style/BTN_gral"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/edit"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:onClick="editarEquipoOnClick"/>
+
+                <ImageButton
+                    style="@style/BTN_gral"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/delet"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:onClick="eliminarEquipoOnClick"/>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>

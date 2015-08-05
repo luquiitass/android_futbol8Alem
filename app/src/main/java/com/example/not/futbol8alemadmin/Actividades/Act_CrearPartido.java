@@ -3,8 +3,10 @@ package com.example.not.futbol8alemadmin.Actividades;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +36,8 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
 
     private Principal principal;
     private Partido unPartido;
+
+    private int request_code=1;
 
     private Spinner SPN_eL;
     private Spinner SPN_eV;
@@ -75,12 +79,11 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
 
         principal=(Principal)getIntent().getSerializableExtra("principal");
         principal.addObserver(this);
-        pDialog.onProgresSDialog(this,"Cargando...");
-        principal.obtenerPartidosEquipos();
 
         if (getIntent().getBooleanExtra("modificar",false)){
             esModificar=true;
-            unPartido=(Partido)getIntent().getSerializableExtra("unPartido");
+            unPartido=principal.obtenerPartido(getIntent().getIntExtra("unPartido",-1));
+            unPartido.addObserver(this);
             setTitle("Modificar partido " + principal.queAdministro());
             unPartido.addObserver(this);
             BTN_Crear_Modificar.setText("Modificar");
@@ -90,46 +93,43 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
             setTitle("Crear partido " + principal.queAdministro());
             BTN_Crear_Modificar.setText("Crear Partido");
         }
+        cargarView();
 
 
 
     }
 
     public void eventoBootonOnClicK(View view){
-       if(((Button)view).getText().toString().equals("Modificar")){
-            modificarPartido();
-       }else if (((Button)view).getText().toString().equals("Crear Partido")){
-           crearPartido();
+       try {
+           if (((Button) view).getText().toString().equals("Modificar")) {
+               crearModificarPartido("modificar");
+           } else if (((Button) view).getText().toString().equals("Crear Partido")) {
+               crearModificarPartido("crear");
+           }
+       }catch (Exception e){
+           Toast.makeText(this,e.getMessage(),Toast.LENGTH_LONG).show();
+           pDialog.ofProgressDialog();
        }
     }
 
 
-    private void modificarPartido(){
-        if (SPN_eL.getSelectedItemPosition()!=0 && SPN_eL.getSelectedItemPosition()!=0){
+    private void crearModificarPartido(String accion)throws Exception{
+        if (SPN_eL.getSelectedItemPosition()!=0 && SPN_eV.getSelectedItemPosition()!=0){
             if (SPN_canchaDe.getSelectedItemPosition()!=0){
                 if (!ET_direccionCancha.getText().toString().equals("")){
-                        pDialog.onProgresSDialog(this,"Cargando...");
-                        principal.modificarPartido(unPartido.getId_partido(),SPN_eL.getSelectedItem().toString(), SPN_eV.getSelectedItem().toString(), SPN_canchaDe.getSelectedItem().toString(), ET_direccionCancha.getText().toString(), ET_fecha.getText().toString(), ET_hora.getText().toString());
-                }else{Toast.makeText(this,"Debe colocar la dirección de la cancha del equipo local",Toast.LENGTH_SHORT).show();}
-            }else{Toast.makeText(this,"Debe seleccione ell equipo Local",Toast.LENGTH_SHORT).show();
+                    pDialog.onProgresSDialog(this, "Cargando...");
+                    switch (accion){
+                        case "modificar":
+                            unPartido.modificarPartido_BD(unPartido.getId_partido(), SPN_eL.getSelectedItem().toString(), SPN_eV.getSelectedItem().toString(), SPN_canchaDe.getSelectedItem().toString(), ET_direccionCancha.getText().toString(), ET_fecha.getText().toString(), ET_hora.getText().toString());
+                            break;
+                        case "crear":
+                            principal.crearPartido_BD(SPN_eL.getSelectedItem().toString(), SPN_eV.getSelectedItem().toString(), SPN_canchaDe.getSelectedItem().toString(), ET_direccionCancha.getText().toString(), ET_fecha.getText().toString(), ET_hora.getText().toString());
+                            break;
+                    }
+                }else{Toast.makeText(this,getString(R.string.LG_debeColocarDireccionCancha),Toast.LENGTH_SHORT).show();}
+            }else{Toast.makeText(this,R.string.LG_debeSeleccinarEquipoLocal,Toast.LENGTH_SHORT).show();
                 SPN_canchaDe.setFocusable(true);}
-        }else{Toast.makeText(this,"Debe seleccionar los equipos del partido",Toast.LENGTH_SHORT).show();}
-    }
-
-
-    public void crearPartido(){
-        if (SPN_eL.getSelectedItemPosition()!=0 && SPN_eL.getSelectedItemPosition()!=0){
-            if (SPN_canchaDe.getSelectedItemPosition()!=0){
-                if (!ET_direccionCancha.getText().toString().equals("")){
-                        try {
-                            pDialog.onProgresSDialog(this,"Cargando...");
-                            principal.crearPartido(SPN_eL.getSelectedItem().toString(), SPN_eV.getSelectedItem().toString(), SPN_canchaDe.getSelectedItem().toString(), ET_direccionCancha.getText().toString(), ET_fecha.getText().toString(), ET_hora.getText().toString());
-                        } catch (Exepcion exepcion) {
-                        }
-                }else{Toast.makeText(this,"Debe colocar la dirección de la cancha del equipo local",Toast.LENGTH_SHORT).show();}
-            }else{Toast.makeText(this,"Debe seleccione ell equipo Local",Toast.LENGTH_SHORT).show();
-                SPN_canchaDe.setFocusable(true);}
-        }else{Toast.makeText(this,"Debe seleccionar los equipos del partido",Toast.LENGTH_SHORT).show();}
+        }else{Toast.makeText(this,getString(R.string.LG_debeSaleccionarLosEquiposDelPartido),Toast.LENGTH_SHORT).show();}
     }
 
     public void seleccionarFecha(View view){
@@ -149,17 +149,11 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
     public void cargarView(){
-        if (!esModificar) {
-            cargarFechaHoraActual();
-        }
+        cargarFechaHoraActual();
         eventosEnSpinner();
         cargarSpinnerEquipos();
         eventosChackBox();
@@ -167,7 +161,7 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
 
     private void cargarViewParaModificar() {
         ET_hora.setText(unPartido.getHora());
-        ET_fecha.setText(unPartido.getFeha());
+        ET_fecha.setText(unPartido.getFecha());
 
     }
 
@@ -188,7 +182,7 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
             list.add(equipo.getNombreEquipo());
         }
         SPN_eL.setAdapter(new ArrayAdapter<String>(this, R.layout.libre_veterano,list));
-        SPN_eV.setAdapter(new ArrayAdapter<String>(this, R.layout.libre_veterano,list));
+        SPN_eV.setAdapter(new ArrayAdapter<String>(this, R.layout.libre_veterano, list));
         if (esModificar){
             SPN_eL.setSelection(obtenerPosicionParaSpiines(list,unPartido.getEquipoLocal()));
             SPN_eV.setSelection(obtenerPosicionParaSpiines(list,unPartido.getEquipoVisitante()));
@@ -200,13 +194,13 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
         CheckBox_otradireccion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(CheckBox_otradireccion.isChecked()){
+                if (CheckBox_otradireccion.isChecked()) {
                     ET_direccionCancha.setEnabled(true);
-                }else{
+                } else {
                     ET_direccionCancha.setEnabled(false);
-                    if (SPN_canchaDe.getSelectedItemPosition()!= 0) {
+                    if (SPN_canchaDe.getSelectedItemPosition() != 0) {
                         ET_direccionCancha.setText(principal.obtenerEquipo(SPN_canchaDe.getSelectedItem().toString()).getDireccionCancha());
-                    }else{
+                    } else {
                         ET_direccionCancha.setText("");
                     }
                 }
@@ -242,6 +236,7 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
                         item.add("Seleccionar Equipo Local");
                         item.add( SPN_eL.getSelectedItem().toString());
                         item.add(SPN_eV.getSelectedItem().toString());
+                        item.add("Neutral");
                         SPN_canchaDe.setAdapter(new ArrayAdapter<String>(Act_CrearPartido.this, R.layout.libre_veterano, item));
                         if (esModificar) {
                             SPN_canchaDe.setSelection(obtenerPosicionParaSpiines(item, unPartido.getCanchaeDe()));
@@ -260,11 +255,14 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
         this.SPN_canchaDe.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position != 0) {
+                if (position != 0 && position!=3) {
                     ET_direccionCancha.setText(principal.obtenerEquipo(parent.getSelectedItem().toString()).getDireccionCancha());
                     CheckBox_otradireccion.setEnabled(true);
+                }else if (position==3){
+                    ET_direccionCancha.setEnabled(true);
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -277,10 +275,12 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
         año=c.get(Calendar.YEAR);
         mes=c.get(Calendar.MONTH);
         dia=c.get(Calendar.DAY_OF_MONTH);
-        updateFecha();
         hora=c.get(Calendar.HOUR_OF_DAY);
         minutos=c.get(Calendar.MINUTE);
-        updateHora();
+        if (!esModificar) {
+            updateHora();
+            updateFecha();
+        }
     }
 
     public void updateFecha(){
@@ -333,18 +333,46 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
                     cargarView();
                     break;
                 case "Error de conexión":
-                    Toast.makeText(this,"Error de Conexión",Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,getResources().getText(R.string.LG_errorDeConexion),Toast.LENGTH_LONG).show();
+                    devolverPrincipal();
                     break;
                 case "partidoInsertado":
-                    Toast.makeText(this,"Partido creado correctamente",Toast.LENGTH_LONG).show();
-                    this.finish();
+                    Toast.makeText(this,getResources().getText(R.string.LG_partidoCreado),Toast.LENGTH_LONG).show();
+                    devolverPrincipal();
                     break;
                 case "partidoNoInsertado":
-                    Toast.makeText(this,"No se pudo crear éste partido",Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,getResources().getText(R.string.LG_noSeCreoElPartio),Toast.LENGTH_LONG).show();
+                    break;
+                case "Actualizado":
+                    Toast.makeText(this,getResources().getText(R.string.LG_partidoModificado),Toast.LENGTH_LONG).show();
+                    devolverPrincipal();
+                    break;
+                case "noActualizado":
+                    Toast.makeText(this,getString(R.string.LG_noSePudoModificar),Toast.LENGTH_LONG).show();
                     break;
             }
             pDialog.ofProgressDialog();
 
         }
     }
+
+    public void devolverPrincipal(){
+        Intent intent=new Intent();
+        intent.putExtra("principal", principal);
+        intent.putExtra("recargar",true);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode){
+            case KeyEvent.KEYCODE_BACK:
+                devolverPrincipal();
+                return true;
+        }
+        return false;
+    }
+
+
 }

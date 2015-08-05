@@ -9,10 +9,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
-            style="@style/crearPart_LinearLayouVertical">
+            style="@style/crearPart_LinearLayouVertical"
+            android:focusableInTouchMode="true">
 
             <TextView
-                style="@style/TV_crearPart"
+                style="@style/TV_explicativo"
                 android:layout_marginTop="10dp"
                 android:text="@string/selacciobarEquios"/>
 
@@ -45,7 +46,7 @@
                 </LinearLayout>
 
             <TextView
-                style="@style/TV_crearPart"
+                style="@style/TV_explicativo"
                 android:text="@string/selaccionarFechaDeEncuentro"/>
 
             <LinearLayout
@@ -64,7 +65,7 @@
                 </LinearLayout>
 
             <TextView
-                style="@style/TV_crearPart"
+                style="@style/TV_explicativo"
                 android:text="@string/selaccionarHoraDeEncuentro"/>
 
             <LinearLayout
@@ -84,7 +85,7 @@
             </LinearLayout>
 
             <TextView
-                style="@style/TV_crearPart"
+                style="@style/TV_explicativo"
                 android:text="@string/seleccionarCancha" />
             <Spinner
                 android:layout_width="wrap_content"
@@ -93,7 +94,7 @@
 
                 </Spinner>
             <TextView
-                style="@style/TV_crearPart"
+                style="@style/TV_explicativo"
                 android:text="@string/direccionCancha"/>
 
             <EditText
@@ -103,15 +104,13 @@
                 android:inputType="text" />
 
             <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/TV_explicativo"
                 android:text="@string/otraDireccion"
                 android:enabled="false"
                 android:id="@+id/crearPart_ChecB_otraDireccion"/>
 
             <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                style="@style/BTN_gral"
                 android:id="@+id/BTN_Crear_modificar_partido"
                 android:onClick="eventoBootonOnClicK"/>
 
