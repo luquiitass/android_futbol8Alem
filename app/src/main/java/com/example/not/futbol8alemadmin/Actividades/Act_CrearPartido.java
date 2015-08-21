@@ -99,6 +99,12 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
 
     }
 
+    public void registrarEquipoOnClick(View view){
+        Intent intent=new Intent(this,Act_RegistrarEquipo.class);
+        intent.putExtra("principal",principal);
+        startActivityForResult(intent,request_code);
+    }
+
     public void eventoBootonOnClicK(View view){
        try {
            if (((Button) view).getText().toString().equals("Modificar")) {
@@ -120,7 +126,7 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
                     pDialog.onProgresSDialog(this, "Cargando...");
                     switch (accion){
                         case "modificar":
-                            unPartido.modificarPartido_BD(unPartido.getId_partido(), SPN_eL.getSelectedItem().toString(), SPN_eV.getSelectedItem().toString(), SPN_canchaDe.getSelectedItem().toString(), ET_direccionCancha.getText().toString(), ET_fecha.getText().toString(), ET_hora.getText().toString());
+                            unPartido.modificarPartido_BD( SPN_eL.getSelectedItem().toString(), SPN_eV.getSelectedItem().toString(), SPN_canchaDe.getSelectedItem().toString(), ET_direccionCancha.getText().toString(), ET_fecha.getText().toString(), ET_hora.getText().toString());
                             break;
                         case "crear":
                             principal.crearPartido_BD(SPN_eL.getSelectedItem().toString(), SPN_eV.getSelectedItem().toString(), SPN_canchaDe.getSelectedItem().toString(), ET_direccionCancha.getText().toString(), ET_fecha.getText().toString(), ET_hora.getText().toString());
@@ -374,5 +380,14 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
         return false;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if ((requestCode==request_code)&&(resultCode==RESULT_OK)){
+            principal=(Principal)data.getSerializableExtra("principal");
+            principal.addObserver(this);
+            cargarSpinnerEquipos();
+                        //otros metodos
+        }
+    }
 
 }

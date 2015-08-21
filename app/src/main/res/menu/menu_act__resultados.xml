@@ -3,4 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.not.futbol8alemadmin.Actividades.Act_Resultados">
 
+    <item android:id="@+id/action_bar_buscar" android:title="@string/buscarPartidos"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:icon="@drawable/buscar"/>
+
 </menu>

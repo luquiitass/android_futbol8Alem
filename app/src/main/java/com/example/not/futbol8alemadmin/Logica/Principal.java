@@ -8,19 +8,21 @@ import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
  * 
  */
-public class Principal extends Observable implements Serializable{
+public class Principal extends Observable implements Serializable,Observer{
 
-    private static final String ERRORCONEXION="Error de conexíon";
+    private static final String ERRORCONEXION="Error de conexión";
     private ArrayList<Equipo> equipos;
     private ArrayList<Partido> partidos;
+    private ArrayList<Caja> cajas;
     private int libre=-1;
     /**
      * 
@@ -146,7 +148,9 @@ public class Principal extends Observable implements Serializable{
         String url="http://lucasdb1.esy.es/conectFutbol8/GetDatos.php";
         RequestParams par=new RequestParams();
         par.put("libre",this.libre);
-        operacionesSelectDB(url,par,"todo");
+        par.put("FI",sumar_restar_dias_a_fechaActual(-7));
+        par.put("FF",sumar_restar_dias_a_fechaActual(7));
+        operacionesSelectDB(url, par, "todo");
     }
 
     /**
@@ -163,7 +167,31 @@ public class Principal extends Observable implements Serializable{
         String url="http://lucasdb1.esy.es/conectFutbol8/GetPartidos2.php";
         RequestParams par=new RequestParams();
         par.put("libre",this.libre);
+        par.put("FI",sumar_restar_dias_a_fechaActual(-7));
+        par.put("FF",sumar_restar_dias_a_fechaActual(7));
         operacionesSelectDB(url,par,"partidos");
+    }
+
+    public void obtenerPartidos_BD(String fechaInicio,String fechaFinal) {
+        String url="http://lucasdb1.esy.es/conectFutbol8/GetPartidos2.php";
+        RequestParams par=new RequestParams();
+        par.put("libre",this.libre);
+        par.put("FI",fechaInicio);
+        par.put("FF",fechaFinal);
+        operacionesSelectDB(url,par,"partidos");
+    }
+
+    public void obtenerPartidosDeEquipo(String nombreEquipo) {
+        if (existeEquipo(nombreEquipo)) {
+            String url = "http://lucasdb1.esy.es/conectFutbol8/GetPartidosDeEquipo.php?";
+            RequestParams par = new RequestParams();
+            par.put("libre", this.libre);
+            par.put("id_partido", nombreEquipo);
+            operacionesSelectDB(url, par, "partidos");
+        }else{
+            setChanged();
+            notifyObservers("cargarPartidos");
+        }
     }
 
     /**
@@ -202,16 +230,17 @@ public class Principal extends Observable implements Serializable{
     /**
      * 
      */
-    public void crearEquipo_BD(String nombreEquipo, String fechaInicio, String direccionCancha)throws Exepcion {
+    public void crearEquipo_BD(String nombreEquipo, String fechaInicio, String direccionCancha,String telefono)throws Exepcion {
 
         if (!existeEquipo(nombreEquipo)) {
-            Equipo unEquipo=new Equipo(nombreEquipo,fechaInicio,direccionCancha,this.libre);
+            Equipo unEquipo=new Equipo(nombreEquipo,fechaInicio,direccionCancha,telefono,this.libre);
             String url = "http://lucasdb1.esy.es/conectFutbol8/PutEquipo.php?";
             RequestParams par = new RequestParams();
             par.put("nombreEquipo", unEquipo.getNombreEquipo());
             par.put("direccionCancha", unEquipo.getDireccionCancha());
             par.put("fechaInicio", unEquipo.getFchaInicio());
             par.put("fechaRegistro",unEquipo.getFechaRegitro());
+            par.put("tel",unEquipo.getTelefono());
             par.put("libre", unEquipo.getLibre());
             unEquipo.setFchaInicio(fechaInicio);
             unEquipo.setFechaRegitro(unEquipo.getFechaRegFormAPP());
@@ -273,24 +302,29 @@ public class Principal extends Observable implements Serializable{
 
     public void obtenerDatosJSON( String response,String accion){
         try {
-            JSONArray jsonArray = new JSONArray(response);
-            String estado = ERRORCONEXION;
+            if (response.equals("null")){
+                setChanged();
+                notifyObservers("cargarTodo");
+            }else{
+                JSONArray jsonArray = new JSONArray(response);
+                String estado = ERRORCONEXION;
 
                 int ultimapos = 0;
                 if (accion.equals("partidos") || accion.equals("todo")) {
-                    ultimapos=obtenerJSONPartidos(jsonArray);
+                    ultimapos = obtenerJSONPartidos(jsonArray);
                     estado = "cargarPartidos";
                 }
                 if (accion.equals("equipos") || accion.equals("todo")) {
-                    obtenerJSONEquipos(jsonArray,ultimapos);
+                    obtenerJSONEquipos(jsonArray, ultimapos);
                     if (accion.equals("todo")) {
                         estado = "cargarTodo";
                     } else {
                         estado = "cargarEquipos";
                     }
                 }
-            setChanged();
-            notifyObservers(estado);
+                setChanged();
+                notifyObservers(estado);
+            }
         }catch (Exception e){
             setChanged();
             notifyObservers(ERRORCONEXION);
@@ -308,7 +342,7 @@ public class Principal extends Observable implements Serializable{
                 if (jsonArray.getJSONObject(i).getString("jugado").equals("1")) {
                     jugado = true;
                 }
-                Partido unPartido = new Partido(jsonArray.getJSONObject(i).getInt("part"), jsonArray.getJSONObject(i).getString("eqL"), jsonArray.getJSONObject(i).getString("eqV"), jsonArray.getJSONObject(i).getInt("glL"), jsonArray.getJSONObject(i).getInt("glV"), jsonArray.getJSONObject(i).getString("canchaDe"), jsonArray.getJSONObject(i).getString("direccion"), jsonArray.getJSONObject(i).getString("fecha"), jsonArray.getJSONObject(i).getString("hora"), jsonArray.getJSONObject(i).getString("jugado"), jugado);
+                Partido unPartido = new Partido(jsonArray.getJSONObject(i).getInt("part"), jsonArray.getJSONObject(i).getString("eqL"), jsonArray.getJSONObject(i).getString("eqV"), jsonArray.getJSONObject(i).getInt("glL"), jsonArray.getJSONObject(i).getInt("glV"), jsonArray.getJSONObject(i).getString("canchaDe"), jsonArray.getJSONObject(i).getString("direccion"), jsonArray.getJSONObject(i).getString("fecha"), jsonArray.getJSONObject(i).getString("hora"), jsonArray.getJSONObject(i).getString("jugado"), jugado,this.libre);
                 this.partidos.add(unPartido);
             }
         }catch (Exception e){
@@ -322,10 +356,11 @@ public class Principal extends Observable implements Serializable{
             this.equipos.clear();
             for (int i = ultimapos; i < jsonArray.length(); i++) {
 
-                Equipo unEquipo = new Equipo(jsonArray.getJSONObject(i).getString("eq"), jsonArray.getJSONObject(i).getString("fI"), jsonArray.getJSONObject(i).getString("fR"), this.libre, jsonArray.getJSONObject(i).getString("dire"));
+                Equipo unEquipo = new Equipo(jsonArray.getJSONObject(i).getString("eq"), jsonArray.getJSONObject(i).getString("fI"), jsonArray.getJSONObject(i).getString("fR"), this.libre, jsonArray.getJSONObject(i).getString("dire"),jsonArray.getJSONObject(i).getString("tel"));
                 equipos.add(unEquipo);
             }
         }catch (Exception e){
+
         }
     }
 
@@ -423,4 +458,87 @@ public class Principal extends Observable implements Serializable{
         }
     }
 
+    private String sumar_restar_dias_a_fechaActual(int cantDias){
+        Calendar calendar;
+        try {
+            String place = "America/Argentina/Buenos_Aires";
+            java.util.TimeZone zone = java.util.TimeZone.getTimeZone(place);
+            calendar = java.util.Calendar.getInstance(zone);
+            calendar.add(Calendar.DAY_OF_YEAR, cantDias);
+        }catch (Exception e){
+            calendar= new GregorianCalendar();
+        }
+        DateFormat format= new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(calendar.getTime());
+    }
+
+
+
+
+
+
+    //---todo ---------------------------esto seria la parte donde estarian los metodos para realizar el cobro----------------------
+    public void abrirCaja_BD()throws Exepcion{
+        if (!existeCajaAbierta()) {
+            Caja unCaja = new Caja();
+            unCaja.guardar_BD();
+        }else{ throw new Exepcion("Ya existe una caja abierta");
+        }
+    }
+
+    public void cerrarCaja()throws Exepcion{
+        if (existeCajaAbierta()){
+            Caja unaCaja=obtenerCajaAbierta();
+            unaCaja.addObserver(this);
+            unaCaja.cerrarCaja();
+
+        }else {
+            throw new Exepcion("Todas las cajas estan cerradas");
+        }
+    }
+
+
+    public Boolean existeCajaAbierta(){
+        for (Caja unaCaja:this.cajas){
+            if (!unaCaja.getCerrada()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Caja  obtenerCajaAbierta(){
+        for (Caja unaCaja:this.cajas){
+            if (!unaCaja.getCerrada()){
+                return unaCaja;
+            }
+        }
+        return null;
+    }
+
+
+    public void nuevoMoviento(){
+        if (existeCajaAbierta()){
+            Caja unaCaja=obtenerCajaAbierta();
+
+        }
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        if (data!= null) {
+            String estado="";
+            switch (data.toString()) {
+                case "cajaCreada":
+                    cajas.add((Caja)observable);
+                    estado=data.toString();
+                    break;
+                case "cajaCerrada":
+                    estado=data.toString();
+                    break;
+            }
+            setChanged();
+            notifyObservers(data.toString());
+        }
+    }
 }

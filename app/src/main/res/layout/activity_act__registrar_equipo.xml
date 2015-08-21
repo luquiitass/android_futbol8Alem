@@ -58,7 +58,19 @@
             <EditText
                 style="@style/TV_regEquipo"
                 android:id="@+id/ET_regEquipo_direccion"
+                android:capitalize="sentences"
                 />
+
+            <TextView
+                style="@style/TV_explicativo"
+                android:text="@string/telefono" />
+
+            <EditText
+                style="@style/TV_regEquipo"
+                android:id="@+id/ET_regEquipo_telefono"
+                android:phoneNumber="true"
+                />
+
 
 
             <Button

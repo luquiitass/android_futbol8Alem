@@ -44,6 +44,14 @@
                     android:layout_weight="1"
                     android:id="@+id/crearPart_Spiner_eV"></Spinner>
                 </LinearLayout>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/registrarEquipo"
+                android:layout_gravity="right"
+                android:scaleType="fitXY"
+                android:drawableRight="@android:drawable/ic_menu_add"
+                android:onClick="registrarEquipoOnClick"/>
 
             <TextView
                 style="@style/TV_explicativo"

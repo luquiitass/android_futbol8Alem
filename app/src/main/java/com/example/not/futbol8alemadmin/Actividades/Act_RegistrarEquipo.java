@@ -38,6 +38,7 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
     private EditText ET_fechaInicio;
     private EditText ET_nombreEquipo;
     private EditText ET_direccionCancha;
+    private EditText ET_telefono;
 
     private final DiversosDialog pDialog=new DiversosDialog();
 
@@ -50,6 +51,7 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
         ET_fechaInicio=(EditText)findViewById(R.id.ET_regEquipo_fechaInicio);
         ET_nombreEquipo=(EditText)findViewById(R.id.ET_regEquipo_nombreEquipo);
         ET_direccionCancha=(EditText)findViewById(R.id.ET_regEquipo_direccion);
+        ET_telefono=(EditText)findViewById(R.id.ET_regEquipo_telefono);
         principal=(Principal)getIntent().getExtras().getSerializable("principal");
         modificarEquipo=getIntent().getBooleanExtra("modificarUnEquipo",false);
         if (!modificarEquipo) {
@@ -70,16 +72,21 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
     private void cargarViewParaModificar(){
         ET_nombreEquipo.setText(unEquipo.getNombreEquipo());
         ET_direccionCancha.setText(unEquipo.getDireccionCancha());
+        ET_telefono.setText(unEquipo.getTelefono());
     }
 
     public void registrarEquipo(View view) throws Exepcion {
         try {
-                if (!ET_nombreEquipo.getText().toString().equals("") && !ET_direccionCancha.getText().toString().equals("")) {
+                if (!ET_nombreEquipo.getText().toString().trim().equals("") && !ET_direccionCancha.getText().toString().trim().equals("")) {
                     pDialog.onProgresSDialog(this,"Cargando...");
+                    String telefono="Sin número";
+                    if (!ET_telefono.getText().toString().trim().equals("")){
+                        telefono=ET_telefono.getText().toString();
+                    }
                     if (!modificarEquipo) {
-                        this.principal.crearEquipo_BD(ET_nombreEquipo.getText().toString(), ET_fechaInicio.getText().toString(), ET_direccionCancha.getText().toString());
+                        this.principal.crearEquipo_BD(ET_nombreEquipo.getText().toString(), ET_fechaInicio.getText().toString(), ET_direccionCancha.getText().toString(),telefono);
                     }else{
-                        unEquipo.modificarEquipo_BD(unEquipo.getNombreEquipo(), ET_nombreEquipo.getText().toString(), ET_fechaInicio.getText().toString(), ET_direccionCancha.getText().toString());
+                        unEquipo.modificarEquipo_BD(unEquipo.getNombreEquipo(), ET_nombreEquipo.getText().toString(), ET_fechaInicio.getText().toString(), ET_direccionCancha.getText().toString(),ET_telefono.getText().toString());
                     }
                 }else {
                     Toast.makeText(this,"Debe completar todos los campos",Toast.LENGTH_LONG).show();
@@ -160,7 +167,7 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
         if (data != null) {
             switch (data.toString()) {
                 case "equipoInsertado":
-                    Toast.makeText(this,getResources().getString(R.string.LG_partidoCreado), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,getResources().getString(R.string.LG_equipoRegistrado), Toast.LENGTH_LONG).show();
                     devolverPrincipal(false);
                     break;
                 case "equipoNoInsertado":

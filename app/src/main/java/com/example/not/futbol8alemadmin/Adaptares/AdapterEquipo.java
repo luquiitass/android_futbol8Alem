@@ -56,4 +56,11 @@ public class AdapterEquipo extends ArrayAdapter<Equipo> {
         notifyDataSetChanged();
     }
 
+    public Boolean contieneDatos(){
+        if (list.isEmpty()){
+            return false;
+        }
+        return true;
+    }
+
 }

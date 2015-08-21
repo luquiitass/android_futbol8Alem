@@ -46,7 +46,7 @@ public class Partido extends Observable implements Serializable{
         this.jugado=false;
     }
 
-    public Partido(int id_partido, String equipoLocal, String equipoVisitante, int golesLocal, int golesVisitante, String canchaeDe, String direccion, String feha, String hora, String ganador, Boolean jugado) {
+    public Partido(int id_partido, String equipoLocal, String equipoVisitante, int golesLocal, int golesVisitante, String canchaeDe, String direccion, String feha, String hora, String ganador, Boolean jugado,int libre) {
         this.id_partido = id_partido;
         this.equipoLocal = equipoLocal;
         this.equipoVisitante = equipoVisitante;
@@ -56,6 +56,7 @@ public class Partido extends Observable implements Serializable{
         this.direccion = direccion;
         this.fecha = formatAPPFecha(feha);
         this.hora = hora;
+        this.libre=libre;
         this.ganador = ganador;
         this.jugado = jugado;
 
@@ -272,22 +273,19 @@ public class Partido extends Observable implements Serializable{
 
 
     public boolean equals(Partido o) {
-        if((this.equipoLocal.equals(o.getEquipoLocal())||(this.equipoLocal.equals(o.getEquipoVisitante())))&& (this.equipoVisitante.equals(o.getEquipoVisitante())||(this.equipoLocal.equals(o.getEquipoVisitante()))) && this.fecha.equals(formatAPPFecha(o.getFecha())) && this.libre== o.libre){
-            return true;
-        }
-        return false;
+        return (this.equipoLocal.equals(o.getEquipoLocal()) || (this.equipoLocal.equals(o.getEquipoVisitante()))) && (this.equipoVisitante.equals(o.getEquipoVisitante()) || (this.equipoVisitante.equals(o.getEquipoLocal()))) && this.fecha.equals(formatAPPFecha(o.getFecha())) && this.libre == o.libre;
     }
 
-    public void modificarPartido_BD(int idPartido,final String m_equipoLocal,final String m_equipoVisitante,final String m_canchaeDe,final String m_direccion,final String m_feha,final String m_hora) {
+    public void modificarPartido_BD(final String m_equipoLocal,final String m_equipoVisitante,final String m_canchaeDe,final String m_direccion,final String m_fecha,final String m_hora) {
         String url = "http://lucasdb1.esy.es/conectFutbol8/UpdateModificarPartido.php?";
         RequestParams par = new RequestParams();
-        par.put("id_partido",idPartido);
-        par.put("eL", equipoLocal);
-        par.put("eV", equipoVisitante);
-        par.put("canchaDe", canchaeDe);
-        par.put("direc", direccion);
-        par.put("horaEncuentro",hora);
-        par.put("fecha", formatBDFecha(fecha));
+        par.put("id_partido",this.id_partido);
+        par.put("eL", m_equipoLocal);
+        par.put("eV", m_equipoVisitante);
+        par.put("canchaDe", m_canchaeDe);
+        par.put("dir", m_direccion);
+        par.put("hora",hora);
+        par.put("fecha", formatBDFecha(m_fecha));
         par.put("libre",this.libre);
 
         AsyncHttpClient client = new AsyncHttpClient();
@@ -304,7 +302,7 @@ public class Partido extends Observable implements Serializable{
                             setEquipoVisitante(m_equipoVisitante);
                             setCanchaeDe(m_canchaeDe);setDireccion(m_direccion);
                             setHora(m_hora);
-                            setFecha(m_feha);
+                            setFecha(m_fecha);
                         } else {
                             estado = "noActualizado";
                         }

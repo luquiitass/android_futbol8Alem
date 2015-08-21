@@ -83,5 +83,9 @@ public class AdapterResultado extends ArrayAdapter<Partido> {
     public Partido getItem(int pos){
         return list.get(pos);
     }
+
+    public boolean contieneDatos(){
+        return !list.isEmpty();
+    }
 }
 

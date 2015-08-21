@@ -7,13 +7,17 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.not.futbol8alemadmin.Adaptares.AdapterEquipo;
+import com.example.not.futbol8alemadmin.Logica.Equipo;
 import com.example.not.futbol8alemadmin.Logica.Principal;
 import com.example.not.futbol8alemadmin.R;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -31,15 +35,22 @@ public class Act_Equipos extends ActionBarActivity implements Observer{
 
     private DiversosDialog pDialog=new DiversosDialog();
 
+    private TextView TV_sinNadaQueMostrar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act__equipos);
         principal=(Principal)getIntent().getSerializableExtra("principal");
         setTitle("Equipos C."+principal.queAdministro());
+
+        TV_sinNadaQueMostrar=(TextView)getLayoutInflater().inflate(R.layout.sin_nada_que_mostrar,null);
+        TV_sinNadaQueMostrar.setText("No se han encontrado equipos");
+
         LV_principal=(PullToRefreshListView)findViewById(R.id.LV_principal);
-        adapterEquipo=new AdapterEquipo(this,principal.getEquipos());
+        adapterEquipo=new AdapterEquipo(this,new ArrayList());
         LV_principal.setAdapter(adapterEquipo);
+
         principal.addObserver(this);
         pDialog.onProgresSDialog(this,getString(R.string.LG_espereUnosSegundos));
         principal.obtenerEquipos_BD();
@@ -51,10 +62,10 @@ public class Act_Equipos extends ActionBarActivity implements Observer{
         LV_principal.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent=new Intent(Act_Equipos.this, Act_unEquipo.class);
-                intent.putExtra("principal",principal);
-                intent.putExtra("unEquipo",principal.getEquipos().get(position).getNombreEquipo());
-                startActivityForResult(intent,request_code);
+                Intent intent = new Intent(Act_Equipos.this, Act_unEquipo.class);
+                intent.putExtra("principal", principal);
+                intent.putExtra("unEquipo", principal.getEquipos().get(position).getNombreEquipo());
+                startActivityForResult(intent, request_code);
             }
         });
         LV_principal.setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
@@ -67,6 +78,21 @@ public class Act_Equipos extends ActionBarActivity implements Observer{
 
     public void cargarEquiposEnLV(){
         adapterEquipo.actualizar(principal);
+        mensajeSinNadaQueMostrar(R.id.lay_equipos,TV_sinNadaQueMostrar,adapterEquipo.contieneDatos());
+
+    }
+
+    private void mensajeSinNadaQueMostrar(int layout_id,TextView msj,boolean colocar){
+        ViewGroup layout=(ViewGroup)findViewById(layout_id);
+        if (!colocar) {
+            if (layout.getChildCount() == 1) {
+                layout.addView(msj, 0);
+            }
+        }else{
+            if (layout.getChildCount() == 2) {
+                layout.removeViewAt(0);
+            }
+        }
     }
 
     @Override
@@ -93,7 +119,7 @@ public class Act_Equipos extends ActionBarActivity implements Observer{
         if (data!=null){
             switch (data.toString()){
                 case "cargarEquipos":
-                    adapterEquipo.notifyDataSetChanged();
+                    cargarEquiposEnLV();
                     break;
                 case "Error de conexión":
                     Toast.makeText(this,getString(R.string.LG_errorDeConexionDesliceHaciaAbajo),Toast.LENGTH_LONG).show();

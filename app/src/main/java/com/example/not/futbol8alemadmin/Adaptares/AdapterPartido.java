@@ -67,5 +67,9 @@ public class AdapterPartido extends ArrayAdapter<Partido> {
         list.addAll(principal.getPartidosNoJugados());
         this.notifyDataSetChanged();
     }
+
+    public Boolean contieneDatos(){
+        return !list.isEmpty();
+    }
 }
 

@@ -81,6 +81,22 @@
 
                 <TextView
                     style="@style/TV_datosUnEquipo"
+                    android:text="@string/telefono"
+                    android:textColor="@color/textDatosNombre"/>
+                <TextView
+                    style="@style/TV_datosUnEquipo"
+                    android:text="@string/telefono"
+                    android:layout_marginLeft="5dp"
+                    android:id="@+id/TV_unEquipo_telefono"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TV_datosUnEquipo"
                     android:text="@string/direccion"
                     android:textColor="@color/textDatosNombre"/>
                 <TextView

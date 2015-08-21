@@ -23,7 +23,8 @@ public class Equipo extends Observable implements Serializable{
     private String fechaRegitro;
     private int libre;
     private String direccionCancha;
-    private Date mesPago;
+    private String telefono;
+    private Calendar mesPago;
     private int cantPartidosGanados;
     private int cantPartidosEmpatados;
     private int cantPartidosPerdidos;
@@ -38,25 +39,31 @@ public class Equipo extends Observable implements Serializable{
     public Equipo() {
     }
 
-    public Equipo(String nombreEquipo, String fechaInicio,String direccionCancha, int libre) {
+    public Equipo(String nombreEquipo, String fechaInicio,String direccionCancha,String telefono, int libre) {
         this.nombreEquipo = nombreEquipo;
         this.direccionCancha=direccionCancha;
         this.libre = libre;
         this.fechaInicio=formatBDFecha(fechaInicio);
         this.fechaRegitro=getStringFechaRegistro();
-        this.mesPago=new Date();
+        this.telefono=telefono;
+        this.mesPago=Calendar.getInstance();
         this.cantPartidosEmpatados=0;
         this.cantPartidosGanados=0;
         this.cantPartidosPerdidos=0;
         this.partidos=new ArrayList<Partido>();
     }
 
-    public Equipo(String nombreEquipo, String fechaInicio, String fechaRegitro, int libre, String direccionCancha) {
+    public Equipo(String nombreEquipo, String fechaInicio, String fechaRegitro, int libre, String direccionCancha,String telefono) {
         this.fechaInicio = formatAPPFecha(fechaInicio);
         this.nombreEquipo = nombreEquipo;
         this.fechaRegitro = formatAPPFecha(fechaRegitro);
         this.libre = libre;
         this.direccionCancha = direccionCancha;
+        if (telefono.equals("null")){
+            this.telefono="Sin número";
+        }else{
+            this.telefono=telefono;
+        }
         this.cantPartidosGanados =0;
         this.cantPartidosEmpatados =0;
         this.cantPartidosPerdidos =0;
@@ -64,6 +71,23 @@ public class Equipo extends Observable implements Serializable{
     }
 
 // Todo --------------------Get Set -------------------------------------
+
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(String fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
 
     public String getNombreEquipo() {
         return nombreEquipo;
@@ -97,11 +121,11 @@ public class Equipo extends Observable implements Serializable{
         this.fechaRegitro = fechaRegitro;
     }
 
-    public Date getMesPago() {
+    public Calendar getMesPago() {
         return mesPago;
     }
 
-    public void setMesPago(Date mesPago) {
+    public void setMesPago(Calendar mesPago) {
         this.mesPago = mesPago;
     }
 
@@ -205,7 +229,7 @@ public class Equipo extends Observable implements Serializable{
     }
 
 
-    public void modificarEquipo_BD(final String nombreEquipoV,final String m_nombreEquipoN,final String m_fechaInicio,final String m_direccionCancha){
+    public void modificarEquipo_BD(final String nombreEquipoV,final String m_nombreEquipoN,final String m_fechaInicio,final String m_direccionCancha,final String m_telefono){
 
         String url="http://lucasdb1.esy.es/conectFutbol8/UpdateEquipo.php?";
         RequestParams par=new RequestParams();
@@ -213,6 +237,7 @@ public class Equipo extends Observable implements Serializable{
         par.put("nombreEN",m_nombreEquipoN);
         par.put("fechaInicio",formatBDFecha(m_fechaInicio));
         par.put("dire",m_direccionCancha);
+        par.put("tel",m_telefono);
         par.put("libre",this.libre);
 
         AsyncHttpClient client = new AsyncHttpClient();
@@ -225,9 +250,10 @@ public class Equipo extends Observable implements Serializable{
                     if (statusCode == 200) {
                         if (retorno.equals("Actualizado")) {
                             estado = "Actualizado";
-                            nombreEquipo=m_nombreEquipoN;
-                            direccionCancha=m_direccionCancha;
-                            fechaInicio=m_fechaInicio;
+                            setNombreEquipo(m_nombreEquipoN);
+                            setDireccionCancha(m_direccionCancha);
+                            setFchaInicio(m_fechaInicio);
+                            setTelefono(m_telefono);
                         } else {
                             estado = "noActualizado";
                         }

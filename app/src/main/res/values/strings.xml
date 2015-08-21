@@ -63,6 +63,7 @@
     <string name="modificarResultado">Modificar Resultados</string>
 
 
+
     <!-- 0000000000000000 String utilizados en logica
         Partido-->
     <string name="LG_partidoEliminado">Partido eliminado</string>
@@ -83,7 +84,7 @@
 
     <!-- Otros -->
     <string name="LG_errorDeConexion">Error de conexión</string>
-    <string name="LG_errorDeConexionDesliceHaciaAbajo">Error de conexión. Deslice hacia abajo para Actualizar</string>
+    <string name="LG_errorDeConexionDesliceHaciaAbajo">Error de conexión. Deslizar hacia abajo para Actualizar</string>
     <string name="LG_resultadoModificado">Resultado modificado</string>
     <string name="LG_debeColocarDireccionCancha">Debe colocar la direccion de la cancha</string>
     <string name="LG_debeSeleccinarEquipoLocal">Debe seleccionar el equipo local</string>
@@ -98,7 +99,12 @@
     <string name="LG_advertenciaEliminarPartido">Estas seguro que deceas Eliminar éste partido</string>
     <string name="LG_advertenciaEliminarEquipo">Estas seguro que deceas Eliminar éste Equipo</string>
     <string name="LG_eliminando">Eliminando...</string>
-
+    <string name="RealizarBusquedaPorEquipo">Realizar la busqueda por equipo</string>
+    <string name="buscar">Buscar</string>
+    <string name="RealizarBusquedaPorFecha">Realizar la busqueda por fecha</string>
+    <string name="buscarPartidos">Buscar Partidos</string>
+    <string name="title_activity_act__busqueda_partidos">Busqueda</string>
+    <string name="telefono">Telefono</string>
 
 
 </resources>

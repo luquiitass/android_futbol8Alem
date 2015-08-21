@@ -1,6 +1,8 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/lay_resultados"
     tools:context="com.example.not.futbol8alemadmin.Actividades.Act_Resultados">
 
     <eu.erikw.PullToRefreshListView
@@ -9,4 +11,4 @@
         android:id="@+id/LV_resultados">
     </eu.erikw.PullToRefreshListView>
 
-</RelativeLayout>
+</LinearLayout>

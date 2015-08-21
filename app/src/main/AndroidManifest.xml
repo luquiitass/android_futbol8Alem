@@ -58,6 +58,10 @@
             android:name=".Actividades.Act_unResultado"
             android:label="@string/title_activity_act_un_resultado" >
         </activity>
+        <activity
+            android:name=".Actividades.Act_BusquedaPartidos"
+            android:label="@string/title_activity_act__busqueda_partidos" >
+        </activity>
     </application>
 
 </manifest>

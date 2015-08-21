@@ -1,0 +1,90 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.not.futbol8alem.Actividades.Act_BusquedaPartidos">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="7dp"
+                    android:id="@+id/check_busqueda_x_fecha"
+                    android:text="@string/RealizarBusquedaPorFecha"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lay_busq_x_fecha"
+                    android:visibility="gone"
+                    android:orientation="horizontal">
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:editable="false"
+                        android:id="@+id/ET_fechaInicio"
+                        android:onClick="seleccionarFechaOnClick"/>
+
+                    <TextView
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/a"
+                        android:gravity="center"/>
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:editable="false"
+                        android:id="@+id/ET_fechaFinal"
+                        android:onClick="seleccionarFechaOnClick"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="7dp"
+                    android:id="@+id/check_busqueda_x_equipo"
+                    android:text="@string/RealizarBusquedaPorEquipo"
+                    />
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/SPN_equipos"
+                    android:visibility="gone"
+                    ></Spinner>
+            </LinearLayout>
+
+            <Button
+                style="@style/BTN_gral"
+                android:text="@string/buscar"
+                android:layout_gravity="center"
+                android:onClick="realizarBusquedaOnClick"/>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
