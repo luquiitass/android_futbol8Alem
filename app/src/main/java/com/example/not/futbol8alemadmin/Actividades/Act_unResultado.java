@@ -67,7 +67,7 @@ public class Act_unResultado extends ActionBarActivity implements Observer{
         builder.setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                pDialog.onProgresSDialog(Act_unResultado.this,getString(R.string.LG_eliminando));
+                pDialog.onProgresSDialog(Act_unResultado.this, getString(R.string.LG_eliminando));
                 principal.eliminarPartido_BD(unPartido.getId_partido());
             }
         });
@@ -82,9 +82,17 @@ public class Act_unResultado extends ActionBarActivity implements Observer{
 
     public void modificarResultadosOnClick(View view){
         Intent intent=new Intent(this,Act_finalizarPartido.class);
-        intent.putExtra("unPartido",unPartido.getId_partido());
-        intent.putExtra("principal",principal);
-        startActivityForResult(intent,request_code );
+        intent.putExtra("unPartido", unPartido.getId_partido());
+        intent.putExtra("principal", principal);
+        startActivityForResult(intent, request_code);
+    }
+
+    public void modificarDatoPartido(View v){
+        Intent intent = new Intent(Act_unResultado.this, Act_CrearPartido.class);
+        intent.putExtra("modificar", true);
+        intent.putExtra("unPartido", unPartido.getId_partido());
+        intent.putExtra("principal", principal);
+        startActivityForResult(intent, request_code);
     }
 
     @Override

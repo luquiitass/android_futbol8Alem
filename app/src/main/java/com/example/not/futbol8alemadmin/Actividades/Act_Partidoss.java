@@ -165,9 +165,10 @@ public class Act_Partidoss extends ActionBarActivity implements Observer{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if ((requestCode==request_code)&&(resultCode==RESULT_OK)){
             principal=(Principal)data.getSerializableExtra("principal");
+            principal.deleteObservers();
             principal.addObserver(this);
             if (data.getBooleanExtra("recargar",false)){
-                principal.obtenerPartidos_BD();
+                principal.obtenerPartidosEquipos_BD();
             }
             adapterPartido.actualizar(principal);
         }else if((requestCode==request_code_busqueda)&&(resultCode==RESULT_OK)){

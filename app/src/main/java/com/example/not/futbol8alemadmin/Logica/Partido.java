@@ -226,7 +226,7 @@ public class Partido extends Observable implements Serializable{
      * 
      */
     public void modificarResultados(final int gL, final int gV) {
-        String url="http://lucasdb1.esy.es/conectFutbol8/UpdateFinalizarPartido.php?";
+        String url="http://futbol8alem.com/conectFutbol8/UpdateFinalizarPartido.php?";
         RequestParams par=new RequestParams();
         par.put("id_partido",id_partido);
         par.put("GL",gL);
@@ -277,7 +277,7 @@ public class Partido extends Observable implements Serializable{
     }
 
     public void modificarPartido_BD(final String m_equipoLocal,final String m_equipoVisitante,final String m_canchaeDe,final String m_direccion,final String m_fecha,final String m_hora) {
-        String url = "http://lucasdb1.esy.es/conectFutbol8/UpdateModificarPartido.php?";
+        String url = "http://futbol8alem.com/conectFutbol8/UpdateModificarPartido.php?";
         RequestParams par = new RequestParams();
         par.put("id_partido",this.id_partido);
         par.put("eL", m_equipoLocal);

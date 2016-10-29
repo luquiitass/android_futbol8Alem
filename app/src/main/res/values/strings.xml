@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Admin Futbol 8 Alem</string>
+    <string name="app_name">Admin Fútbol 8 Alem</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -9,8 +9,8 @@
     <string name="nombreEquipo">Nombre del Equipo</string>
     <string name="a">a</string>
     <string name="Fechadeinicio">Fecha de Inicio del Equipo</string>
-    <string name="direccionCancha">Direccion de cancha</string>
-    <string name="saleccionarTipoDeEquipo">Selecionar el tipo de equipo:</string>
+    <string name="direccionCancha">Dirección de cancha</string>
+    <string name="saleccionarTipoDeEquipo">Seleccionar el tipo de equipo:</string>
     <string name="title_activity_act__crear_partido">Partido Nuevo</string>
     <string name="vs">vs</string>
     <string name="seleccionarHora">Seleccionar hora</string>
@@ -33,7 +33,7 @@
     <string name="valorDato">ValoreDato</string>
     <string name="subtitulo">Subtitulo</string>
     <string name="modificarPartido">Modificar Partido</string>
-    <string name="title_activity_act__principal">Admin Futbol 8 Alem</string>
+    <string name="title_activity_act__principal">Admin Fútbol 8 Alem</string>
     <string name="administrarLibres">Administrar Libres</string>
     <string name="administrarVeteranos">Administrar Veteranos</string>
     <string name="title_activity_act_finalizar_partido">Act_finalizarPartido</string>
@@ -43,13 +43,13 @@
     <string name="title_activity_act__equipos">Act_Equipos</string>
     <string name="equipo">Equipo</string>
     <string name="title_activity_act_un_equipo">Act_unEquipo</string>
-    <string name="anadirEquipo">ñadir</string>
+    <string name="anadirEquipo">añadir</string>
     <string name="anadirEquipoa">Añadir Equipo</string>
     <string name="equipos">Equipos</string>
     <string name="datosDelEquipo">Datos del Equipo</string>
     <string name="FechaInicio">Fecha inicio:</string>
     <string name="registradoEl">Registrado el:</string>
-    <string name="direccion">Direccion:</string>
+    <string name="direccion">Dirección:</string>
     <string name="añadirPartido">Añadir Partido</string>
     <string name="title_activity_act__resultados">Act_Resultados</string>
     <string name="title_activity_act_un_resultado">Act_unResultado</string>
@@ -69,7 +69,7 @@
     <string name="LG_partidoEliminado">Partido eliminado</string>
     <string name="LG_noSePudiEliminarPartido">No se ha podido eliminar el partido</string>
     <string name="LG_partidoCreado">Partido creado correctamente</string>
-    <string name="LG_noSeCreoElPartio">No se ha podidoo crear el Partido</string>
+    <string name="LG_noSeCreoElPartio">No se ha podido crear el Partido</string>
     <string name="LG_partidoModificado">Partido modificado</string>
     <string name="LG_noSePudoModificar">No se ha podido realizar la modificación</string>
     <string name="LG_partidoFinalizado">Partido finalizado</string>
@@ -86,7 +86,7 @@
     <string name="LG_errorDeConexion">Error de conexión</string>
     <string name="LG_errorDeConexionDesliceHaciaAbajo">Error de conexión. Deslizar hacia abajo para Actualizar</string>
     <string name="LG_resultadoModificado">Resultado modificado</string>
-    <string name="LG_debeColocarDireccionCancha">Debe colocar la direccion de la cancha</string>
+    <string name="LG_debeColocarDireccionCancha">Debe colocar la dirección de la cancha</string>
     <string name="LG_debeSeleccinarEquipoLocal">Debe seleccionar el equipo local</string>
     <string name="LG_debeSaleccionarLosEquiposDelPartido">Debe seleccionar los equipos del partido</string>
     <string name="LG_espereUnosSegundos">Espere unos segundos...</string>
@@ -96,15 +96,19 @@
     <string name="LG_cargando">Cargando...</string>
     <string name="LG_resultadosDePartidos">Resultados de partidos</string>
     <string name="LG_cargandoPartidos">Cargando partidos...</string>
-    <string name="LG_advertenciaEliminarPartido">Estas seguro que deceas Eliminar éste partido</string>
-    <string name="LG_advertenciaEliminarEquipo">Estas seguro que deceas Eliminar éste Equipo</string>
+    <string name="LG_advertenciaEliminarPartido">Estas seguro que deseas Eliminar éste partido</string>
+    <string name="LG_advertenciaEliminarEquipo">Estas seguro que deseas Eliminar éste Equipo</string>
     <string name="LG_eliminando">Eliminando...</string>
-    <string name="RealizarBusquedaPorEquipo">Realizar la busqueda por equipo</string>
+    <string name="RealizarBusquedaPorEquipo">Realizar la búsqueda por equipo</string>
     <string name="buscar">Buscar</string>
-    <string name="RealizarBusquedaPorFecha">Realizar la busqueda por fecha</string>
+    <string name="RealizarBusquedaPorFecha">Realizar la búsqueda por fecha</string>
     <string name="buscarPartidos">Buscar Partidos</string>
-    <string name="title_activity_act__busqueda_partidos">Busqueda</string>
-    <string name="telefono">Telefono</string>
+    <string name="title_activity_act__busqueda_partidos">Búsqueda</string>
+    <string name="telefono">Teléfono</string>
+    <string name="modificar_datos">Modificar datos partidos</string>
+    <string name="visible">Visible</string>
+    <string name="no_visible">No Visible</string>
+    <string name="visible_dosPuntod">Visible:</string>
 
 
 </resources>

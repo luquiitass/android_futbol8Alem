@@ -340,7 +340,6 @@ public class Act_CrearPartido extends ActionBarActivity implements Observer{
                     break;
                 case "Error de conexión":
                     Toast.makeText(this,getResources().getText(R.string.LG_errorDeConexion),Toast.LENGTH_LONG).show();
-                    devolverPrincipal();
                     break;
                 case "partidoInsertado":
                     Toast.makeText(this,getResources().getText(R.string.LG_partidoCreado),Toast.LENGTH_LONG).show();

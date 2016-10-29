@@ -28,6 +28,7 @@ public class Equipo extends Observable implements Serializable{
     private int cantPartidosGanados;
     private int cantPartidosEmpatados;
     private int cantPartidosPerdidos;
+    private boolean  visible;
     private ArrayList<Partido> partidos;
 
     /**
@@ -50,10 +51,11 @@ public class Equipo extends Observable implements Serializable{
         this.cantPartidosEmpatados=0;
         this.cantPartidosGanados=0;
         this.cantPartidosPerdidos=0;
+        this.visible=false;
         this.partidos=new ArrayList<Partido>();
     }
 
-    public Equipo(String nombreEquipo, String fechaInicio, String fechaRegitro, int libre, String direccionCancha,String telefono) {
+    public Equipo(String nombreEquipo, String fechaInicio, String fechaRegitro, int libre, String direccionCancha,String telefono,boolean visible) {
         this.fechaInicio = formatAPPFecha(fechaInicio);
         this.nombreEquipo = nombreEquipo;
         this.fechaRegitro = formatAPPFecha(fechaRegitro);
@@ -64,6 +66,7 @@ public class Equipo extends Observable implements Serializable{
         }else{
             this.telefono=telefono;
         }
+        this.visible=visible;
         this.cantPartidosGanados =0;
         this.cantPartidosEmpatados =0;
         this.cantPartidosPerdidos =0;
@@ -72,6 +75,14 @@ public class Equipo extends Observable implements Serializable{
 
 // Todo --------------------Get Set -------------------------------------
 
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
 
     public String getTelefono() {
         return telefono;
@@ -229,9 +240,9 @@ public class Equipo extends Observable implements Serializable{
     }
 
 
-    public void modificarEquipo_BD(final String nombreEquipoV,final String m_nombreEquipoN,final String m_fechaInicio,final String m_direccionCancha,final String m_telefono){
+    public void modificarEquipo_BD(final String nombreEquipoV,final String m_nombreEquipoN,final String m_fechaInicio,final String m_direccionCancha,final String m_telefono,final boolean visible){
 
-        String url="http://lucasdb1.esy.es/conectFutbol8/UpdateEquipo.php?";
+        String url="http://futbol8alem.com/conectFutbol8/UpdateEquipo.php?";
         RequestParams par=new RequestParams();
         par.put("nombreEV",nombreEquipoV);
         par.put("nombreEN",m_nombreEquipoN);
@@ -239,6 +250,13 @@ public class Equipo extends Observable implements Serializable{
         par.put("dire",m_direccionCancha);
         par.put("tel",m_telefono);
         par.put("libre",this.libre);
+        if (visible){
+            par.put("visible",1);
+        }else {
+            par.put("visible",0);
+        }
+
+
 
         AsyncHttpClient client = new AsyncHttpClient();
         try {
@@ -254,6 +272,7 @@ public class Equipo extends Observable implements Serializable{
                             setDireccionCancha(m_direccionCancha);
                             setFchaInicio(m_fechaInicio);
                             setTelefono(m_telefono);
+                            setVisible(visible);
                         } else {
                             estado = "noActualizado";
                         }

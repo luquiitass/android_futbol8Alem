@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -39,6 +40,7 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
     private EditText ET_nombreEquipo;
     private EditText ET_direccionCancha;
     private EditText ET_telefono;
+    private CheckBox CB_visible;
 
     private final DiversosDialog pDialog=new DiversosDialog();
 
@@ -59,6 +61,7 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
             principal.getEquipos();
         }else {
             setTitle("Modificar Equipo C."+principal.queAdministro());
+            CB_visible=(CheckBox)findViewById(R.id.CB_visible);
             unEquipo=principal.obtenerEquipo(getIntent().getStringExtra("unEquipo"));
             unEquipo.addObserver(this);
             cargarViewParaModificar();
@@ -73,6 +76,14 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
         ET_nombreEquipo.setText(unEquipo.getNombreEquipo());
         ET_direccionCancha.setText(unEquipo.getDireccionCancha());
         ET_telefono.setText(unEquipo.getTelefono());
+        if (unEquipo.isVisible()){
+            CB_visible.setChecked(true);
+            CB_visible.setText("visible");
+        }else{
+            CB_visible.setChecked(false);
+            CB_visible.setText("No visible");
+        }
+        CB_visible.setEnabled(true);
     }
 
     public void registrarEquipo(View view) throws Exepcion {
@@ -86,7 +97,7 @@ public class Act_RegistrarEquipo extends ActionBarActivity implements Observer{
                     if (!modificarEquipo) {
                         this.principal.crearEquipo_BD(ET_nombreEquipo.getText().toString(), ET_fechaInicio.getText().toString(), ET_direccionCancha.getText().toString(),telefono);
                     }else{
-                        unEquipo.modificarEquipo_BD(unEquipo.getNombreEquipo(), ET_nombreEquipo.getText().toString(), ET_fechaInicio.getText().toString(), ET_direccionCancha.getText().toString(),ET_telefono.getText().toString());
+                        unEquipo.modificarEquipo_BD(unEquipo.getNombreEquipo(), ET_nombreEquipo.getText().toString(), ET_fechaInicio.getText().toString(), ET_direccionCancha.getText().toString(),ET_telefono.getText().toString(),CB_visible.isChecked());
                     }
                 }else {
                     Toast.makeText(this,"Debe completar todos los campos",Toast.LENGTH_LONG).show();

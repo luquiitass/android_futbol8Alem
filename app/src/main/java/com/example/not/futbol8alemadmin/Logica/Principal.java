@@ -8,6 +8,7 @@ import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -145,7 +146,7 @@ public class Principal extends Observable implements Serializable,Observer{
      */
 
     public void obtenerPartidosEquipos_BD() {
-        String url="http://lucasdb1.esy.es/conectFutbol8/GetDatos.php";
+        String url="http://futbol8alem.com/conectFutbol8/GetDatos.php";
         RequestParams par=new RequestParams();
         par.put("libre",this.libre);
         par.put("FI",sumar_restar_dias_a_fechaActual(-7));
@@ -157,14 +158,14 @@ public class Principal extends Observable implements Serializable,Observer{
      * 
      */
     public void obtenerEquipos_BD() {
-        String url="http://lucasdb1.esy.es/conectFutbol8/GetEquipos2.php";
+        String url="http://futbol8alem.com/conectFutbol8/GetEquipos2.php";
         RequestParams par=new RequestParams();
         par.put("libre",this.libre);
         operacionesSelectDB(url,par,"equipos");
     }
 
     public void obtenerPartidos_BD() {
-        String url="http://lucasdb1.esy.es/conectFutbol8/GetPartidos2.php";
+        String url="http://lfutbol8alem.com/conectFutbol8/GetPartidos2.php";
         RequestParams par=new RequestParams();
         par.put("libre",this.libre);
         par.put("FI",sumar_restar_dias_a_fechaActual(-7));
@@ -173,7 +174,7 @@ public class Principal extends Observable implements Serializable,Observer{
     }
 
     public void obtenerPartidos_BD(String fechaInicio,String fechaFinal) {
-        String url="http://lucasdb1.esy.es/conectFutbol8/GetPartidos2.php";
+        String url="http://futbol8alem.com/conectFutbol8/GetPartidos2.php";
         RequestParams par=new RequestParams();
         par.put("libre",this.libre);
         par.put("FI",fechaInicio);
@@ -183,7 +184,7 @@ public class Principal extends Observable implements Serializable,Observer{
 
     public void obtenerPartidosDeEquipo(String nombreEquipo) {
         if (existeEquipo(nombreEquipo)) {
-            String url = "http://lucasdb1.esy.es/conectFutbol8/GetPartidosDeEquipo.php?";
+            String url = "http://futbol8alem.com/conectFutbol8/GetPartidosDeEquipo.php?";
             RequestParams par = new RequestParams();
             par.put("libre", this.libre);
             par.put("id_partido", nombreEquipo);
@@ -200,7 +201,7 @@ public class Principal extends Observable implements Serializable,Observer{
     public void crearPartido_BD(String equipoLocal, String equipoVisitante, String canchaeDe, String direccion, String feha, String hora)throws Exepcion {
         Partido unPartido=new Partido(equipoLocal,equipoVisitante,canchaeDe,direccion,feha,hora,this.libre);
         if (!existePartido(unPartido)) {
-            String url = "http://lucasdb1.esy.es/conectFutbol8/PutPartido.php?";
+            String url = "http://futbol8alem.com/conectFutbol8/PutPartido.php?";
             RequestParams par = new RequestParams();
             par.put("eL", unPartido.getEquipoLocal());
             par.put("eV", unPartido.getEquipoVisitante());
@@ -219,7 +220,7 @@ public class Principal extends Observable implements Serializable,Observer{
      */
 
     public void eliminarPartido_BD(int id_partido) {
-        String url="http://lucasdb1.esy.es/conectFutbol8/DeletePartido.php?";
+        String url="http://futbol8alem.com/conectFutbol8/DeletePartido.php?";
         RequestParams par=new RequestParams();
         par.put("libre",this.libre);
         par.put("id_partido", id_partido);
@@ -234,7 +235,7 @@ public class Principal extends Observable implements Serializable,Observer{
 
         if (!existeEquipo(nombreEquipo)) {
             Equipo unEquipo=new Equipo(nombreEquipo,fechaInicio,direccionCancha,telefono,this.libre);
-            String url = "http://lucasdb1.esy.es/conectFutbol8/PutEquipo.php?";
+            String url = "http://futbol8alem.com/conectFutbol8/PutEquipo.php?";
             RequestParams par = new RequestParams();
             par.put("nombreEquipo", unEquipo.getNombreEquipo());
             par.put("direccionCancha", unEquipo.getDireccionCancha());
@@ -256,7 +257,7 @@ public class Principal extends Observable implements Serializable,Observer{
      */
 
     public void eliminarEquipo_BD(String nombreEquipo) {
-        String url="http://lucasdb1.esy.es/conectFutbol8/DeleteEquipo.php?";
+        String url="http://futbol8alem.com/conectFutbol8/DeleteEquipo.php?";
         RequestParams par=new RequestParams();
         par.put("nombreEquipo",nombreEquipo);
         par.put("libre",this.libre);
@@ -339,6 +340,7 @@ public class Principal extends Observable implements Serializable,Observer{
             for (int i = 0; i < jsonArray.length(); i++) {
                 retorno = i;
                 Boolean jugado = false;
+                JSONObject jsonObject=jsonArray.getJSONObject(i);
                 if (jsonArray.getJSONObject(i).getString("jugado").equals("1")) {
                     jugado = true;
                 }
@@ -355,8 +357,12 @@ public class Principal extends Observable implements Serializable,Observer{
         try {
             this.equipos.clear();
             for (int i = ultimapos; i < jsonArray.length(); i++) {
+                boolean visible=false;
+                if (jsonArray.getJSONObject(i).getInt("vs")==1){
+                    visible=true;
+                }
 
-                Equipo unEquipo = new Equipo(jsonArray.getJSONObject(i).getString("eq"), jsonArray.getJSONObject(i).getString("fI"), jsonArray.getJSONObject(i).getString("fR"), this.libre, jsonArray.getJSONObject(i).getString("dire"),jsonArray.getJSONObject(i).getString("tel"));
+                Equipo unEquipo = new Equipo(jsonArray.getJSONObject(i).getString("eq"), jsonArray.getJSONObject(i).getString("fI"), jsonArray.getJSONObject(i).getString("fR"), this.libre, jsonArray.getJSONObject(i).getString("dire"),jsonArray.getJSONObject(i).getString("tel"),visible);
                 equipos.add(unEquipo);
             }
         }catch (Exception e){

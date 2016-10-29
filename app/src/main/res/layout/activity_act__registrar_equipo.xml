@@ -71,6 +71,13 @@
                 android:phoneNumber="true"
                 />
 
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_visible"
+                android:enabled="false"
+                android:id="@+id/CB_visible"/>
+
 
 
             <Button

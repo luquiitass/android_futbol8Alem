@@ -35,7 +35,7 @@ public class Act_unEquipo extends ActionBarActivity implements Observer{
         principal=(Principal)getIntent().getSerializableExtra("principal");
         principal.addObserver(this);
         unEquipo=principal.obtenerEquipo(getIntent().getStringExtra("unEquipo"));
-        setTitle("Equipo C."+principal.queAdministro());
+        setTitle("Equipo C." + principal.queAdministro());
         cargarDatos();
 
 
@@ -47,12 +47,19 @@ public class Act_unEquipo extends ActionBarActivity implements Observer{
         TextView TV_fechaReg =(TextView)findViewById(R.id.TV_unEquipo_fechaReg);
         TextView TV_direccion =(TextView)findViewById(R.id.TV_unEquipo_direccion);
         TextView TV_telefono= (TextView)findViewById(R.id.TV_unEquipo_telefono);
+        TextView TV_visible=(TextView)findViewById(R.id.TV_visible);
 
         TV_equipo.setText(unEquipo.getNombreEquipo());
         TV_fechaInicio.setText(unEquipo.getFchaInicio());
         TV_fechaReg.setText(unEquipo.getFechaRegitro());
         TV_direccion.setText(unEquipo.getDireccionCancha());
         TV_telefono.setText(unEquipo.getTelefono());
+        if (unEquipo.isVisible()){
+            TV_visible.setText("ES VISIBLE");
+        }else{
+            TV_visible.setText("OCULTO");
+        }
+
     }
 
     public void editarEquipoOnClick(View view){
